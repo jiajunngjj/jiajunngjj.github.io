@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/blog/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/blog/" rel="alternate" type="text/html" /><updated>2020-08-15T12:14:23+08:00</updated><id>http://localhost:4000/blog/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name><email>ngjiajun13@gmail.com</email></author><entry><title type="html">Externalize Your Business Rules with Red Hat Decision Manager</title><link href="http://localhost:4000/blog/2020/08/12/externalize-your-business-rules" rel="alternate" type="text/html" title="Externalize Your Business Rules with Red Hat Decision Manager" /><published>2020-08-12T00:00:00+08:00</published><updated>2020-08-12T00:00:00+08:00</updated><id>http://localhost:4000/blog/2020/08/12/Externalize-Your-Business-Rules</id><content type="html" xml:base="http://localhost:4000/blog/2020/08/12/externalize-your-business-rules">&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png&quot; alt=&quot;Red Hat Decision Manager&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
+code.&lt;/p&gt;
+
+&lt;p&gt;Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
+The part which involves business rules is when the &lt;a href=&quot;https://mlflow.org/&quot;&gt;ML flow&lt;/a&gt; computes a score from the raw data received, and the application needs to make a 
+decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.&lt;/p&gt;
+
+&lt;p&gt;Before going into my setup, let’s understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
+folks. Non-technical folks like the business people know the rules and regulations policy but do not understand application code. It will be difficult to manage the rules especially when 
+business applications can contain tens of thousands of rules which are continually changing. Therefore, there will be impact when it comes to adding, removing or changing rules.
+As such, an external business rules engine helps to decouple application code from business rules and allows a centralized management of rules.&lt;/p&gt;
+
+&lt;h2 id=&quot;concepts&quot;&gt;Concepts&lt;/h2&gt;
+&lt;p&gt;RHDM is based on the &lt;a href=&quot;https://www.drools.org/&quot;&gt;Drools&lt;/a&gt; project, one of the widest used rules engines in the industry which many in-house applications are already using.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90094510-b74b8480-dd60-11ea-91cf-5f5ed519f2e3.png&quot; alt=&quot;Drools Engine&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The decision engine operates using the following basic components:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Rules&lt;/strong&gt;: Business rules or DMN decisions that you define. All rules must contain at a minimum the conditions that trigger the rule and the actions that the rule dictates.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Facts&lt;/strong&gt;: Data that enters or changes in the decision engine that the decision engine matches to rule conditions to execute applicable rules.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Production memory&lt;/strong&gt;: Location where rules are stored in the decision engine.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Working memory&lt;/strong&gt;: Location where facts are stored in the decision engine.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Agenda&lt;/strong&gt;: Location where activated rules are registered and sorted (if applicable) in preparation for execution.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;What is a rules engine&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“A business rules engine is a software system that executes one or more business rules in a runtime production environment” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A rules engine is a collection of objects with conditions and actions. Businesses can run their process model against it and let it run through the conditions.&lt;/p&gt;
+
+&lt;p&gt;An example would be:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Company’s credit score of 50 or less will be given the status of “Disallow”.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These are a few benefits of using a rules engine:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Logical separation of rules from application code.&lt;/li&gt;
+  &lt;li&gt;Human-readable rule which allows non-technical folks to understand the rules easily.&lt;/li&gt;
+  &lt;li&gt;Centralization of rules provides flexibility to make adjustment easily without the need of going through the application codes.&lt;/li&gt;
+  &lt;li&gt;Rules can be reused.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;What is a business rule&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“A business rule defines or constrains some aspect of business and always resolves to either true or false. It specifically involves terms, facts and rules. 
+Business rules are intended to assert business structure or to control or influence the behavior of the business.” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Business rules are essential to guide and help in decision making. Businesses would aim to automate them but not every business decision can be automated. The goal is to
+automate repeatable operational decisions.&lt;/p&gt;
+
+&lt;p&gt;An example would be something like this:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;A bank would disapprove a loan to a customer/company which has a credit rating of 50 or lower.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;set-up&quot;&gt;Set up&lt;/h2&gt;
+&lt;p&gt;There are many ways to set up RHDM and here is how I set it up:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90087001-4d29e400-dd4e-11ea-8501-3dc3ebe5eaf3.png&quot; alt=&quot;RHDM Arch&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Decision Central - An authoring environment with GUI to allow low code development (DMN, DRL rules, decision table, etc). It also manages Kjars deployments to multiple Kie Servers.&lt;/li&gt;
+  &lt;li&gt;KIE Server - It hosts the decision services which execute rules and processes. KIE server exposes its functionality via REST, JMS and Java interfaces to client applications.&lt;/li&gt;
+  &lt;li&gt;Git - It stores business assets such as DMN model, decision tables, etc. In my case, it stores the DRL rules.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;My RHDM sits on OpenShift Container Platform where my KIE server runs in a container and is able to leverage on Kubernetes’s capabilities (self-healing, etc). 
+Whenever I update and commit my rules to the Git server, it automatically triggers the CI/CD flow to deploy the new set of rules embedded into the KIE server, and roll out the
+container deployment using a rolling update strategy where the previous instance is terminated only when the new one is ready.&lt;/p&gt;
+
+&lt;p&gt;Here is how I write my rules in DRL:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90090035-8ca7fe80-dd55-11ea-996f-611548b7477b.png&quot; alt=&quot;DRL&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;I used the Decision Central to create a Result object and write my DRL rules. My DRL rules are simple, I am bascially writing a condition where a score of less than 70% would mean not fraud and a score of more than 70% means fraud. 
+Afterwhich, I built and deployed my KIE server with the DRL rules. When the KIE server is deployed successfully, my application sends a payload with the score and receives a response payload containing the status.&lt;/p&gt;
+
+&lt;p&gt;My written rules can be found on my Git Hub, &lt;a href=&quot;https://github.com/jiajunngjj/drl-fraud-demo&quot;&gt;https://github.com/jiajunngjj/drl-fraud-demo&lt;/a&gt; which can be imported directly onto Decision Central as well.
+There are many ways to create your decision service and since my project is just a simple set of rules, DRL rules are sufficient.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;It is always the best practice to externalize rules from applications to allow a more agile and efficient development. 
+There are many use cases which RHDM can be part of the solution from fraud detection in banking industry to automated trading in capital markets and etc.&lt;/p&gt;
+
+&lt;p&gt;While driving applications with external business rules is beneficial, 
+it is also important to note that it is an additional layer to an application architecture, hence the application and its requirements should be carefully designed to ensure it can leverage on the external engine with
+minimal to zero application code change when a rule changes.&lt;/p&gt;</content><author><name>Jia Jun Ng (JJ)</name><email>ngjiajun13@gmail.com</email></author><category term="redhat" /><category term="decision manager" /><category term="drools" /><category term="jboss" /><category term="appdev" /><summary type="html"></summary></entry><entry><title type="html">Quarkus, a lightweight Java for Serverless</title><link href="http://localhost:4000/blog/2020/05/11/quarkus-openshift-serverless" rel="alternate" type="text/html" title="Quarkus, a lightweight Java for Serverless" /><published>2020-05-11T00:00:00+08:00</published><updated>2020-05-11T00:00:00+08:00</updated><id>http://localhost:4000/blog/2020/05/11/Quarkus-Openshift-Serverless</id><content type="html" xml:base="http://localhost:4000/blog/2020/05/11/quarkus-openshift-serverless">&lt;p&gt;Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
+is often seems as an unfavourable option because of its heavy-duty performance.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/81423897-ad295100-9187-11ea-8baf-94e0e232fb88.png&quot; alt=&quot;Quarkus Logo&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;However, fear not. Quarkus is here to bring Java into the cloud-native world. Quarkus is an open source, full stack, Kubernetes-native Java framework which optimizes Java for
+the cloud future. Quarkus promises:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Fast startup (~0.055 Seconds for REST + CRUD)&lt;/li&gt;
+  &lt;li&gt;Low memory (~35 MB for REST + CRUD)&lt;/li&gt;
+  &lt;li&gt;Small footprint (higher density)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/81463365-b3511900-91eb-11ea-9d14-f549c45b1a8f.png&quot; alt=&quot;Quarkus_metrics from http://quarkus.io/&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Hence it is very suitable for containers and serverless. For instance, when running a simple hello world Quarkus application, it starts in ~1s:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/81528510-76be2280-938f-11ea-9948-e4ea099e6ad6.png&quot; alt=&quot;command line output&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This simple hello world Quarkus application can found on my &lt;a href=&quot;https://github.com/jiajunngjj/quarkus-helloworld&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+&lt;p&gt;Quarkus works out-of-the-box with popular Java standards, frameworks, and libraries like Eclipse MicroProfile and Vert.x. Quarkus dependency injection is based 
+on CDI hence Java developers are able to use JAX-RS, JPA and many others. Quarkus also includes an extension framework which allows 
+developers to write extensions for integration and enhancement. A list of existing available extensions can be found &lt;a href=&quot;https://github.com/quarkusio/quarkus/tree/master/extensions&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Run-time wise, Quarkus offers two run modes:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;JVM&lt;/li&gt;
+  &lt;li&gt;Native&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;JVM mode packages Quarkus applications as JAR files and run on vanilla OpenJDK HotSpot while native mode uses GraalVM to create a standalone executable that does not
+run in a Java VM. Both modes have its pros and cons, and it depends on use case to see which mode is the best fit. Considering an event-driven scenario where events trigger the function 
+to spin up a service in real-time to react to the event. It will make sense to use native mode because JVM takes a while to start.&lt;/p&gt;
+
+&lt;p&gt;An interesting feature is the hot-reload capability (dev mode) where any changes made to any Java file, application config or static 
+resources will be compiled automatically once the browser is refreshed. This is made possible with Quarkus augmentation phase where almost everything (metadata, 
+config parsing, logics) is already configured in build-time, the whole reload takes less than a second when changes are made in run-time.  This is enabled by default and to use it, just need to run:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mvn compile quarkus:dev
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This improves developer’s experience especially when it comes to debugging.&lt;/p&gt;
+
+&lt;h2 id=&quot;serverless-architecture&quot;&gt;Serverless Architecture&lt;/h2&gt;
+&lt;p&gt;As Quarkus has extremely short startup time, it brings Java developers to the serverless world where workloads can be scaled or scaled to zero based on demand. 
+Quarkus is a good fit for serverless applications and is event-driven in nature. Together with Kubernetes, the serverless pattern can be implemented easily where
+an event triggers the application and Kubernetes starts a container to handle that event. The application might produce some results from that compute or 
+processing and once idle for enough time, that container will be scaled down to zero. This solves the under-provisioning and over-provisioning problems. I’ve written
+a demo using Quarkus and Knative to create a serverless application on OpenShift (Red Hat’s flavour of Kubernetes). OpenShift Serverless is based on Knative, an open 
+source Kubernetes serverless project, which is generally available today.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/81521596-40c27380-937a-11ea-9e3d-bb3ec9a048b1.png&quot; alt=&quot;Serverless Pattern&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Demo: &lt;a href=&quot;https://github.com/jiajunngjj/knative-quarkus-openshift-demo&quot;&gt;https://github.com/jiajunngjj/knative-quarkus-openshift-demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;All in all, Quarkus aims to optimize Java development for distributed application architectures. Its container-first approach is aligned with microservices and event-driven
+architecture, and digital transformation strategies. Also, serverless computing model plays an important role in the cloud because it controls computing cost.
+Quarkus in Java ecosystem seems to be a game-changer, and moving forward, I’m excited to see how Quarkus can bring fast innovation and help enterprises to stay ahead of competitors.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://quarkus.io/&quot;&gt;http://quarkus.io/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/quarkusio/quarkus&quot;&gt;https://github.com/quarkusio/quarkus&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jia Jun Ng (JJ)</name><email>ngjiajun13@gmail.com</email></author><category term="redhat" /><category term="openshift" /><category term="serverless" /><category term="quarkus" /><category term="java" /><category term="event-driven" /><category term="knative" /><summary type="html">Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java is often seems as an unfavourable option because of its heavy-duty performance.</summary></entry><entry><title type="html">AMQ Messaging on OpenShift</title><link href="http://localhost:4000/blog/2020/04/27/amq-openshift" rel="alternate" type="text/html" title="AMQ Messaging on OpenShift" /><published>2020-04-27T00:00:00+08:00</published><updated>2020-04-27T00:00:00+08:00</updated><id>http://localhost:4000/blog/2020/04/27/AMQ-Cluster-On-OpenShift</id><content type="html" xml:base="http://localhost:4000/blog/2020/04/27/amq-openshift">&lt;p&gt;More companies are moving towards a microservices approach for their new applications.
+This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to 
+edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for
+ a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.&lt;/p&gt;
+
+&lt;h2 id=&quot;topology&quot;&gt;Topology&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/80358496-1ae39c00-88af-11ea-8607-421b9d1a9a3b.png&quot; alt=&quot;Red Hat - AMQ Broker on OpenShift&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Unlike traditional deployment of AMQ broker where configuration is needed for high availability (HA) and clustering, AMQ brokers on OpenShift form a cluster automatically when there is more than 
+one broker Pod. Note that there is no master/slave failover model on OpenShift so there is no need for message replication between master/slave either.&lt;/p&gt;
+
+&lt;p&gt;When determining the number of  brokers required to handle certain workload, OpenShift has auto scaling feature which can be configured based on CPU consumption. For instance, a threshold can be set to 70% and when the CPU utilization reaches 70%, 
+OpenShift scales up the AMQ broker Pods; and it scales down when the heavy traffic is gone.&lt;/p&gt;
+
+&lt;p&gt;Internal services connecting to the broker within Openshift cluster is straightforward through the Kubernetes concept of Services. However, external services running outside of OpenShift will have some restrictions to connect to the broker.
+One easiest option is to use SSL and access the broker from the route, and the other is through NodePort binding.&lt;/p&gt;
+
+&lt;p&gt;Demo: &lt;a href=&quot;https://github.com/jiajunng/amq-openshift-demo&quot;&gt;https://github.com/jiajunngjj/amq-openshift-demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;high-availability-ha&quot;&gt;High Availability (HA)&lt;/h2&gt;
+&lt;p&gt;The availability of the brokers and integrity of the messaging data are maintained through Kubernetes concepts of Health Checks, Stateful Sets, Persistent Volumes (PVs) and Persistent Volume Claims (PVCs).
+Health checks are configured in OpenShift to detect and restart unhealthy containers. In the HA configuration of AMQ brokers on OpenShift, there will be at least 2 broker Pods running with each writing messaging data to its own PV. If a broker Pod goes offline, the message
+data stored in that PV is redistributed to an alternative available broker, which then stores it in its own PV.&lt;/p&gt;
+
+&lt;p&gt;Message migration can be enabled on OpenShift to migrate messages when scaling down broker Pods due to failure. This further protects the integrity of messaging data.&lt;/p&gt;
+
+&lt;p&gt;Demo: &lt;a href=&quot;https://github.com/jiajunng/amq-ha-openshift-demo&quot;&gt;https://github.com/jiajunngjj/amq-ha-openshift-demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;storage&quot;&gt;Storage&lt;/h2&gt;
+&lt;p&gt;With container-native storage (OpenShift Container Storage) deployed on OpenShift, PV can be provisioned dynamically with the broker Pod. Else, PV has to be manually provisioned and ensure that they are available 
+for broker Pod to consume. For instance, a cluster of two broker Pods with persistent storage would required two PVs available. Note that in OpenShift deployment, there is no need for a
+shared file system with distributed locking capabilities since each broker Pod has their own PV and message data is redistributed if it goes offline.&lt;/p&gt;
+
+&lt;h2 id=&quot;multi-cluster&quot;&gt;Multi-Cluster&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/80358992-cc82cd00-88af-11ea-82eb-bd50300ea1c3.png&quot; alt=&quot;AMQ Broker - Multi-cluster&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;With more companies leaning towards hybrid and multi-cloud strategy, it is common to have more than one OpenShift clusters across different data centers. 
+AMQ Interconnect is the solution to connect brokers across OpenShift clusters. It is a lightweight AMQP message router which routes messaging data 
+between AMQP-enabled endpoints, including clients, brokers, and standalone services. 
+AMQ Interconnect is based on Dispatch Router from the Apache Qpid™ project.&lt;/p&gt;
+
+&lt;p&gt;Demo: &lt;a href=&quot;https://github.com/jiajunng/amq-federation-openshift-demo&quot;&gt;https://github.com/jiajunngjj/amq-federation-openshift-demo&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;There are many benefits of deploying AMQ broker on OpenShift as AMQ provides simple configuration for allowing the setup of a Broker Mesh, 
+from how configurations are made easier to leveraging on Kubernetes-native capabilities. It is something worth considering when it comes to microservices
+strategy, which is also to have middleware workload containerized and deployed on OpenShift.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://access.redhat.com/documentation/en-us/red_hat_amq/7.6/html/deploying_amq_broker_on_openshift/index&quot;&gt;Red Hat AMQ Broker On OpenShift Documentation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://access.redhat.com/documentation/en-us/red_hat_amq/7.6/html/deploying_amq_interconnect_on_openshift/index&quot;&gt;Red Hat AMQ Interconnect On OpenShift Documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jia Jun Ng (JJ)</name><email>ngjiajun13@gmail.com</email></author><category term="redhat" /><category term="openshift" /><category term="amq broker" /><category term="messaging" /><category term="event-driven" /><summary type="html">More companies are moving towards a microservices approach for their new applications. This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.</summary></entry><entry><title type="html">Configure HostPath Storage For Prometheus on OpenShift v3.11</title><link href="http://localhost:4000/blog/2019/04/19/prometheus-openshift" rel="alternate" type="text/html" title="Configure HostPath Storage For Prometheus on OpenShift v3.11" /><published>2019-04-19T00:00:00+08:00</published><updated>2019-04-19T00:00:00+08:00</updated><id>http://localhost:4000/blog/2019/04/19/Configure-HostPath-Storage-For-Prometheus-On-OpenShift-v3.11</id><content type="html" xml:base="http://localhost:4000/blog/2019/04/19/prometheus-openshift">&lt;p&gt;This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.&lt;/p&gt;
+
+&lt;p&gt;In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.&lt;/p&gt;
+
+&lt;p&gt;Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.&lt;/p&gt;
+
+&lt;h2 id=&quot;configuration-steps&quot;&gt;Configuration Steps&lt;/h2&gt;
+&lt;h3 id=&quot;assumptions&quot;&gt;Assumptions&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;HostPath SCC is already created&lt;/li&gt;
+  &lt;li&gt;HostPath SCC set to allow hostpath directory volume plugin&lt;/li&gt;
+  &lt;li&gt;Granting access to this SCC to all users&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;inventory-file&quot;&gt;Inventory file&lt;/h3&gt;
+&lt;p&gt;It is mandatory set the following variables in the inventory file:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Variable&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;openshift_cluster_monitoring_operator_node_selector={‘role’:’metrics’}&lt;/td&gt;
+      &lt;td&gt;I have created a label, “role=metrics” to land the pods on the dedicated nodes for Prometheus/Alertmanager. These nodes should contain the HostPath for persistent storage.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;openshift_cluster_monitoring_operator_prometheus_storage_capacity=50G&lt;/td&gt;
+      &lt;td&gt;The persistent volume claim size for each of the Prometheus instances. This variable applies only if openshift_cluster_monitoring_operator_prometheus_storage_enabled is set to true. Defaults to 50Gi.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;openshift_cluster_monitoring_operator_alertmanager_storage_capacity=5Gi&lt;/td&gt;
+      &lt;td&gt;The persistent volume claim size for each of the Alertmanager instances. This variable applies only if openshift_cluster_monitoring_operator_alertmanager_storage_enabled is set to true. Defaults to 2Gi.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;openshift_cluster_monitoring_operator_prometheus_storage_enabled=true&lt;/td&gt;
+      &lt;td&gt;Enable persistent storage for Prometheus&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;openshift_cluster_monitoring_operator_alertmanager_storage_enabled=true&lt;/td&gt;
+      &lt;td&gt;Enable persistent storage for Alertmanager&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;run-the-playbook&quot;&gt;Run the playbook&lt;/h3&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ansible-playbook -i &amp;lt;INVENTORY&amp;gt;  /usr/share/ansible/openshift-ansible/playbooks/openshift-monitoring/config.yml```
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;node-hostpath-configuration&quot;&gt;Node hostpath configuration&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Find the namespace ID:
+```
+$ oc get namespace openshift-monitoring -o yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: Openshift Monitoring
+    openshift.io/display-name: “”
+    openshift.io/node-selector: “”
+    openshift.io/sa.scc.mcs: s0:c11,c0
+    openshift.io/sa.scc.supplemental-groups: 1000110000/10000
+    openshift.io/sa.scc.uid-range: 1000110000/10000
+  creationTimestamp: 2019-04-29T03:48:23Z
+  labels:
+    openshift.io/cluster-monitoring: “true”
+  name: openshift-monitoring
+  resourceVersion: “15977564”
+  selfLink: /api/v1/namespaces/openshift-monitoring
+  uid: a3173b3e-6a31-11e9-b915-000c29451a06
+spec:
+  finalizers:
+    &lt;ul&gt;
+      &lt;li&gt;kubernetes
+status:
+  phase: Active
+```&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the example above, my namespace ID is 1000110000.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Change ownership and SELinux label of the HostPath:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ chown 1000110000:root /metrics/
+  $ semanage fcontext -a -t svirt_sandbox_file_t /metrics
+  $ restorecon -v /metrics/
+  $ chown 1000110000:root /alertmanager/
+  $ semanage fcontext -a -t svirt_sandbox_file_t /alertmanager
+  $ restorecon -v /alertmanager/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;post-installation---prometheus&quot;&gt;Post Installation - Prometheus&lt;/h3&gt;
+&lt;p&gt;After the playbook has completed successfully, you will see that the pods are starting:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; $ oc get pods
+ NAME                                          READY     STATUS    RESTARTS   AGE
+ cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          1m
+ prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          28s
+  
+ NAME                                          READY     STATUS    RESTARTS   AGE
+ cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          2m
+ grafana-67cb69b946-684vc                      2/2       Running   0          55s
+ prometheus-k8s-0                              0/4       Pending   0          5s
+ prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          1m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;By default, when openshift_cluster_monitoring_operator_prometheus_storage_enabled is set to true, it will create a default storage class and Prometheus-k8s-0 will remain in Pending state until it has successfully claims its PV. &lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The first thing to do is to delete the PVC created by deployment:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ oc get pvc
+  NAME                                 STATUS    VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  prometheus-k8s-db-prometheus-k8s-0   Pending                                                      4m
+
+  $ oc delete pvc prometheus-k8s-db-prometheus-k8s-0
+  persistentvolumeclaim &quot;prometheus-k8s-db-prometheus-k8s-0&quot; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Create the new PV for Prometheus:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ vi pv-prometheus-0.yml
+
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-0
+  spec:
+    capacity:
+      storage: 100G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /metrics
+    persistentVolumeReclaimPolicy: Retain
+  ClaimRef:
+    name: prometheus-k8s-db-prometheus-k8s-0
+    namespace: openshift-monitoring
+
+  $ oc create -f pv-prometheus-0.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;Note that /metrics is the HostPath attached to the node.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Create the new PVC for Prometheus:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ vi pvc-prometheus-0.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-0
+  spec:
+    resources:
+      requests:
+        storage: 100G
+    accessModes:
+      - ReadWriteOnce
+
+  $ oc create -f pvc-prometheus-0.yml -n openshift-monitoring
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;After this is done, the second Prometheus pod will start to spin up. So, repeat the steps 1 to 3, creating a new PV and PVC with prometheus-k8s-db-prometheus-k8s-1:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ vi pv-prometheus-1.yml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-1
+  spec:
+    capacity:
+      storage: 100G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /metrics
+    persistentVolumeReclaimPolicy: Retain
+  ClaimRef:
+    name: prometheus-k8s-db-prometheus-k8s-1
+    namespace: openshift-monitoring
+
+
+  $ vi pvc-prometheus-1.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-1
+  spec:
+    resources:
+      requests:
+        storage: 100G
+  accessModes:
+    - ReadWriteOnce
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;post-installation--alertmanager&quot;&gt;Post Installation - Alertmanager&lt;/h3&gt;
+&lt;p&gt;After two Prometheus pods are spun up successfully, Alertmanager pods will be spinning up right after.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ oc get pods
+  NAME                                          READY     STATUS    RESTARTS   AGE
+  alertmanager-main-0                           0/3       Pending   0          42s
+  cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          14m
+  grafana-67cb69b946-684vc                      2/2       Running   0          13m
+  prometheus-k8s-0                              4/4       Running   1          1m
+  prometheus-k8s-1                              4/4       Running   3          6m
+  prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          13m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Again, the alertmanager will remain at Pending status until it has claimed the PV successfully.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Delete the Alertmanager PVC created by deployment:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ oc get pvc
+      NAME                                       STATUS    VOLUME                               CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+      alertmanager-main-db-alertmanager-main-0   Pending                                                                                 41s
+      prometheus-k8s-db-prometheus-k8s-0         Bound     prometheus-k8s-db-prometheus-k8s-0   100G       RWO                           7m
+      prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1   100G       RWO                           4m
+
+ $ oc delete pvc alertmanager-main-db-alertmanager-main-0
+ persistentvolumeclaim &quot;alertmanager-main-db-alertmanager-main-0&quot; deleted
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Create the new PV for Alertmanager:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ vi pv-alertmanager-0.yml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: alertmanager-main-db-alertmanager-main-0
+  spec:
+    capacity:
+      storage: 10G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /alertmanager
+    persistentVolumeReclaimPolicy: Retain
+  storageClassName: alertmanager-storageclass
+  ClaimRef:
+    name: alertmanager-main-db-alertmanager-main-0
+    namespace: openshift-monitoring
+
+  $ oc create -f pv-alertmanager-0.yml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;Note that /alertmanager is the HostPath attached to the node.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Create the PVC for Alertmanager:
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ vi pvc-alertmanager-0.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: alertmanager-main-db-alertmanager-main-0
+  spec:
+    resources:
+      requests:
+        storage: 10G
+    accessModes:
+      - ReadWriteOnce
+
+  $ oc create -f pvc-alertmanager-0.yml -n openshift-monitoring
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;After this is done, the second and third Alertmanager pod will start to spin up. So, repeat the steps 1 to 3, creating a new PV and PVC with alertmanager-main-db-alertmanager-main-1 and alertmanager-main-db-alertmanager-main-2 respectively.&lt;/p&gt;
+
+&lt;p&gt;The end result for the PV and PVC in OpenShift-Monitoring:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  $ oc get pv
+  NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                                                       STORAGECLASS   REASON    AGE
+  alertmanager-main-db-alertmanager-main-0   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-0                            5m
+  alertmanager-main-db-alertmanager-main-1   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-1                            1m
+  alertmanager-main-db-alertmanager-main-2   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-2                            8s
+  prometheus-k8s-db-prometheus-k8s-0         100G       RWO            Retain           Bound     openshift-monitoring/prometheus-k8s-db-prometheus-k8s-0                                  13m
+  prometheus-k8s-db-prometheus-k8s-1         100G       RWO            Retain           Bound     openshift-monitoring/prometheus-k8s-db-prometheus-k8s-1                                  11m
+
+  $ oc get pvc
+  NAME                                       STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  alertmanager-main-db-alertmanager-main-0   Bound     alertmanager-main-db-alertmanager-main-0   10G        RWO                           3m
+  alertmanager-main-db-alertmanager-main-1   Bound     alertmanager-main-db-alertmanager-main-1   10G        RWO                           1m
+  alertmanager-main-db-alertmanager-main-2   Bound     alertmanager-main-db-alertmanager-main-2   10G        RWO                           6s
+  prometheus-k8s-db-prometheus-k8s-0         Bound     prometheus-k8s-db-prometheus-k8s-0         100G       RWO                           13m
+  prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1         100G       RWO                           10m
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage&quot;&gt;https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jia Jun Ng (JJ)</name><email>ngjiajun13@gmail.com</email></author><category term="redhat" /><category term="openshift" /><category term="prometheus" /><category term="openshift monitoring" /><summary type="html">This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack. In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration. Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.</summary></entry></feed>

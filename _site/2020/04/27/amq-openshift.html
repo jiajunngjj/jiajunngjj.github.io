@@ -1,0 +1,725 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>AMQ Messaging on OpenShift - JJ’s Blog</title>
+<meta name="description" content="More companies are moving towards a microservices approach for their new applications. This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to  edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for  a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.">
+
+
+  <meta name="author" content="Jia Jun Ng (JJ)">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="JJ's Blog">
+<meta property="og:title" content="AMQ Messaging on OpenShift">
+<meta property="og:url" content="http://localhost:4000/blog/2020/04/27/amq-openshift">
+
+
+  <meta property="og:description" content="More companies are moving towards a microservices approach for their new applications. This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to  edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for  a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-04-27T00:00:00+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/blog/2020/04/27/amq-openshift">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jia Jun Ng (JJ)",
+      "url": "http://localhost:4000/blog/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/blog/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/blog/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/blog/">
+           
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/blog/">Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/blog/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Jia Jun Ng (JJ)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://redhat.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-building" aria-hidden="true"></i><span class="label">Red Hat</span></a></li>
+          
+        
+          
+            <li><a href="#" rel="nofollow noopener noreferrer"><i class="fas fa-fw fas fa-map-marker-alt" aria-hidden="true"></i><span class="label">Singapore</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:ngjiajun13@gmail.com">
+            <meta itemprop="email" content="ngjiajun13@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="AMQ Messaging on OpenShift">
+    <meta itemprop="description" content="More companies are moving towards a microservices approach for their new applications.This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.">
+    <meta itemprop="datePublished" content="2020-04-27T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">AMQ Messaging on OpenShift
+</h1>
+          
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-04-27T00:00:00+08:00">April 27, 2020</time>
+    
+
+    
+      
+      <span class="post__meta-sep"></span>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-clock" aria-hidden="true"></i>
+      
+        3 minute read
+      
+    
+
+  </p>
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>More companies are moving towards a microservices approach for their new applications.
+This approach suits today’s increasingly distributed hybrid cloud and multi-cloud IT infrastructures. Thanks to advances in container orchestration platform, it is easier to 
+edge away from traditional monolithic applications towards distributed and highly-available microservices. Microservices approach would mean more services and there is a need for
+ a messaging layer to serve the inter-service communication. In this post, I’m going to share how AMQ brokers can leverage on OpenShift.</p>
+
+<h2 id="topology">Topology</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/80358496-1ae39c00-88af-11ea-8607-421b9d1a9a3b.png" alt="Red Hat - AMQ Broker on OpenShift" /></p>
+
+<p>Unlike traditional deployment of AMQ broker where configuration is needed for high availability (HA) and clustering, AMQ brokers on OpenShift form a cluster automatically when there is more than 
+one broker Pod. Note that there is no master/slave failover model on OpenShift so there is no need for message replication between master/slave either.</p>
+
+<p>When determining the number of  brokers required to handle certain workload, OpenShift has auto scaling feature which can be configured based on CPU consumption. For instance, a threshold can be set to 70% and when the CPU utilization reaches 70%, 
+OpenShift scales up the AMQ broker Pods; and it scales down when the heavy traffic is gone.</p>
+
+<p>Internal services connecting to the broker within Openshift cluster is straightforward through the Kubernetes concept of Services. However, external services running outside of OpenShift will have some restrictions to connect to the broker.
+One easiest option is to use SSL and access the broker from the route, and the other is through NodePort binding.</p>
+
+<p>Demo: <a href="https://github.com/jiajunng/amq-openshift-demo">https://github.com/jiajunngjj/amq-openshift-demo</a></p>
+
+<h2 id="high-availability-ha">High Availability (HA)</h2>
+<p>The availability of the brokers and integrity of the messaging data are maintained through Kubernetes concepts of Health Checks, Stateful Sets, Persistent Volumes (PVs) and Persistent Volume Claims (PVCs).
+Health checks are configured in OpenShift to detect and restart unhealthy containers. In the HA configuration of AMQ brokers on OpenShift, there will be at least 2 broker Pods running with each writing messaging data to its own PV. If a broker Pod goes offline, the message
+data stored in that PV is redistributed to an alternative available broker, which then stores it in its own PV.</p>
+
+<p>Message migration can be enabled on OpenShift to migrate messages when scaling down broker Pods due to failure. This further protects the integrity of messaging data.</p>
+
+<p>Demo: <a href="https://github.com/jiajunng/amq-ha-openshift-demo">https://github.com/jiajunngjj/amq-ha-openshift-demo</a></p>
+
+<h2 id="storage">Storage</h2>
+<p>With container-native storage (OpenShift Container Storage) deployed on OpenShift, PV can be provisioned dynamically with the broker Pod. Else, PV has to be manually provisioned and ensure that they are available 
+for broker Pod to consume. For instance, a cluster of two broker Pods with persistent storage would required two PVs available. Note that in OpenShift deployment, there is no need for a
+shared file system with distributed locking capabilities since each broker Pod has their own PV and message data is redistributed if it goes offline.</p>
+
+<h2 id="multi-cluster">Multi-Cluster</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/80358992-cc82cd00-88af-11ea-82eb-bd50300ea1c3.png" alt="AMQ Broker - Multi-cluster" /></p>
+
+<p>With more companies leaning towards hybrid and multi-cloud strategy, it is common to have more than one OpenShift clusters across different data centers. 
+AMQ Interconnect is the solution to connect brokers across OpenShift clusters. It is a lightweight AMQP message router which routes messaging data 
+between AMQP-enabled endpoints, including clients, brokers, and standalone services. 
+AMQ Interconnect is based on Dispatch Router from the Apache Qpid™ project.</p>
+
+<p>Demo: <a href="https://github.com/jiajunng/amq-federation-openshift-demo">https://github.com/jiajunngjj/amq-federation-openshift-demo</a></p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>There are many benefits of deploying AMQ broker on OpenShift as AMQ provides simple configuration for allowing the setup of a Broker Mesh, 
+from how configurations are made easier to leveraging on Kubernetes-native capabilities. It is something worth considering when it comes to microservices
+strategy, which is also to have middleware workload containerized and deployed on OpenShift.</p>
+
+<h2 id="references">References</h2>
+<ul>
+  <li><a href="https://access.redhat.com/documentation/en-us/red_hat_amq/7.6/html/deploying_amq_broker_on_openshift/index">Red Hat AMQ Broker On OpenShift Documentation</a></li>
+  <li><a href="https://access.redhat.com/documentation/en-us/red_hat_amq/7.6/html/deploying_amq_interconnect_on_openshift/index">Red Hat AMQ Interconnect On OpenShift Documentation</a></li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/blog/tags/#amq-broker" class="page__taxonomy-item" rel="tag">amq broker</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#event-driven" class="page__taxonomy-item" rel="tag">event-driven</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#messaging" class="page__taxonomy-item" rel="tag">messaging</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#openshift" class="page__taxonomy-item" rel="tag">openshift</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-04-27T00:00:00+08:00">April 27, 2020</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=AMQ+Messaging+on+OpenShift%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F04%2F27%2Famq-openshift" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F04%2F27%2Famq-openshift" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F04%2F27%2Famq-openshift&title=AMQ Messaging on OpenShift" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F04%2F27%2Famq-openshift" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2019/04/19/prometheus-openshift" class="pagination--pager" title="Configure HostPath Storage For Prometheus on OpenShift v3.11
+">Previous</a>
+    
+    
+      <a href="/blog/2020/05/11/quarkus-openshift-serverless" class="pagination--pager" title="Quarkus, a lightweight Java for Serverless
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules with Red Hat Decision Manager
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        5 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/05/11/quarkus-openshift-serverless" rel="permalink">Quarkus, a lightweight Java for Serverless
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-05-11T00:00:00+08:00">May 11, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        3 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
+is of...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2019/04/19/prometheus-openshift" rel="permalink">Configure HostPath Storage For Prometheus on OpenShift v3.11
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2019-04-19T00:00:00+08:00">April 19, 2019</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.
+
+In OpenShift v3.11, Prometheus cluster monitoring is ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    <li><a href="/blog/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Jia Jun Ng (JJ). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/blog/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/blog/assets/js/lunr/lunr.min.js"></script>
+<script src="/blog/assets/js/lunr/lunr-store.js"></script>
+<script src="/blog/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    <script>
+  'use strict';
+
+  (function() {
+    var commentContainer = document.querySelector('#utterances-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('repo', 'jiajunngjj/blog');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+
+  
+
+
+
+
+
+  </body>
+</html>

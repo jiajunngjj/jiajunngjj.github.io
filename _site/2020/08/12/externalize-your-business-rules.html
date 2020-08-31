@@ -1,0 +1,765 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Externalize Your Business Rules with Red Hat Decision Manager - JJ’s Blog</title>
+<meta name="description" content="">
+
+
+  <meta name="author" content="Jia Jun Ng (JJ)">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="JJ's Blog">
+<meta property="og:title" content="Externalize Your Business Rules with Red Hat Decision Manager">
+<meta property="og:url" content="http://localhost:4000/blog/2020/08/12/externalize-your-business-rules">
+
+
+  <meta property="og:description" content="">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2020-08-12T00:00:00+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/blog/2020/08/12/externalize-your-business-rules">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jia Jun Ng (JJ)",
+      "url": "http://localhost:4000/blog/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/blog/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/blog/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/blog/">
+           
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/blog/">Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/blog/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Jia Jun Ng (JJ)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://redhat.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-building" aria-hidden="true"></i><span class="label">Red Hat</span></a></li>
+          
+        
+          
+            <li><a href="#" rel="nofollow noopener noreferrer"><i class="fas fa-fw fas fa-map-marker-alt" aria-hidden="true"></i><span class="label">Singapore</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:ngjiajun13@gmail.com">
+            <meta itemprop="email" content="ngjiajun13@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Externalize Your Business Rules with Red Hat Decision Manager">
+    <meta itemprop="description" content="">
+    <meta itemprop="datePublished" content="2020-08-12T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Externalize Your Business Rules with Red Hat Decision Manager
+</h1>
+          
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+    
+
+    
+      
+      <span class="post__meta-sep"></span>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p><img src="https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png" alt="Red Hat Decision Manager" /></p>
+
+<p>In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
+code.</p>
+
+<p>Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
+The part which involves business rules is when the <a href="https://mlflow.org/">ML flow</a> computes a score from the raw data received, and the application needs to make a 
+decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.</p>
+
+<p>Before going into my setup, let’s understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
+folks. Non-technical folks like the business people know the rules and regulations policy but do not understand application code. It will be difficult to manage the rules especially when 
+business applications can contain tens of thousands of rules which are continually changing. Therefore, there will be impact when it comes to adding, removing or changing rules.
+As such, an external business rules engine helps to decouple application code from business rules and allows a centralized management of rules.</p>
+
+<h2 id="concepts">Concepts</h2>
+<p>RHDM is based on the <a href="https://www.drools.org/">Drools</a> project, one of the widest used rules engines in the industry which many in-house applications are already using.</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/90094510-b74b8480-dd60-11ea-91cf-5f5ed519f2e3.png" alt="Drools Engine" /></p>
+
+<p>The decision engine operates using the following basic components:</p>
+<ul>
+  <li><strong>Rules</strong>: Business rules or DMN decisions that you define. All rules must contain at a minimum the conditions that trigger the rule and the actions that the rule dictates.</li>
+  <li><strong>Facts</strong>: Data that enters or changes in the decision engine that the decision engine matches to rule conditions to execute applicable rules.</li>
+  <li><strong>Production memory</strong>: Location where rules are stored in the decision engine.</li>
+  <li><strong>Working memory</strong>: Location where facts are stored in the decision engine.</li>
+  <li><strong>Agenda</strong>: Location where activated rules are registered and sorted (if applicable) in preparation for execution.</li>
+</ul>
+
+<p><strong>What is a rules engine</strong></p>
+<blockquote>
+  <p>“A business rules engine is a software system that executes one or more business rules in a runtime production environment” - Wikipedia</p>
+</blockquote>
+
+<p>A rules engine is a collection of objects with conditions and actions. Businesses can run their process model against it and let it run through the conditions.</p>
+
+<p>An example would be:</p>
+<ul>
+  <li>Company’s credit score of 50 or less will be given the status of “Disallow”.</li>
+</ul>
+
+<p>These are a few benefits of using a rules engine:</p>
+<ul>
+  <li>Logical separation of rules from application code.</li>
+  <li>Human-readable rule which allows non-technical folks to understand the rules easily.</li>
+  <li>Centralization of rules provides flexibility to make adjustment easily without the need of going through the application codes.</li>
+  <li>Rules can be reused.</li>
+</ul>
+
+<p><strong>What is a business rule</strong></p>
+<blockquote>
+  <p>“A business rule defines or constrains some aspect of business and always resolves to either true or false. It specifically involves terms, facts and rules. 
+Business rules are intended to assert business structure or to control or influence the behavior of the business.” - Wikipedia</p>
+</blockquote>
+
+<p>Business rules are essential to guide and help in decision making. Businesses would aim to automate them but not every business decision can be automated. The goal is to
+automate repeatable operational decisions.</p>
+
+<p>An example would be something like this:</p>
+<ul>
+  <li>A bank would disapprove a loan to a customer/company which has a credit rating of 50 or lower.</li>
+</ul>
+
+<h2 id="set-up">Set up</h2>
+<p>There are many ways to set up RHDM and here is how I set it up:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/90087001-4d29e400-dd4e-11ea-8501-3dc3ebe5eaf3.png" alt="RHDM Arch" /></p>
+
+<ul>
+  <li>Decision Central - An authoring environment with GUI to allow low code development (DMN, DRL rules, decision table, etc). It also manages Kjars deployments to multiple Kie Servers.</li>
+  <li>KIE Server - It hosts the decision services which execute rules and processes. KIE server exposes its functionality via REST, JMS and Java interfaces to client applications.</li>
+  <li>Git - It stores business assets such as DMN model, decision tables, etc. In my case, it stores the DRL rules.</li>
+</ul>
+
+<p>My RHDM sits on OpenShift Container Platform where my KIE server runs in a container and is able to leverage on Kubernetes’s capabilities (self-healing, etc). 
+Whenever I update and commit my rules to the Git server, it automatically triggers the CI/CD flow to deploy the new set of rules embedded into the KIE server, and roll out the
+container deployment using a rolling update strategy where the previous instance is terminated only when the new one is ready.</p>
+
+<p>Here is how I write my rules in DRL:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/90090035-8ca7fe80-dd55-11ea-996f-611548b7477b.png" alt="DRL" /></p>
+
+<p>I used the Decision Central to create a Result object and write my DRL rules. My DRL rules are simple, I am bascially writing a condition where a score of less than 70% would mean not fraud and a score of more than 70% means fraud. 
+Afterwhich, I built and deployed my KIE server with the DRL rules. When the KIE server is deployed successfully, my application sends a payload with the score and receives a response payload containing the status.</p>
+
+<p>My written rules can be found on my Git Hub, <a href="https://github.com/jiajunngjj/drl-fraud-demo">https://github.com/jiajunngjj/drl-fraud-demo</a> which can be imported directly onto Decision Central as well.
+There are many ways to create your decision service and since my project is just a simple set of rules, DRL rules are sufficient.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>It is always the best practice to externalize rules from applications to allow a more agile and efficient development. 
+There are many use cases which RHDM can be part of the solution from fraud detection in banking industry to automated trading in capital markets and etc.</p>
+
+<p>While driving applications with external business rules is beneficial, 
+it is also important to note that it is an additional layer to an application architecture, hence the application and its requirements should be carefully designed to ensure it can leverage on the external engine with
+minimal to zero application code change when a rule changes.</p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/blog/tags/#appdev" class="page__taxonomy-item" rel="tag">appdev</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#decision-manager" class="page__taxonomy-item" rel="tag">decision manager</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#drools" class="page__taxonomy-item" rel="tag">drools</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#jboss" class="page__taxonomy-item" rel="tag">jboss</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Externalize+Your+Business+Rules+with+Red+Hat+Decision+Manager%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F08%2F12%2Fexternalize-your-business-rules&title=Externalize Your Business Rules with Red Hat Decision Manager" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/blog/2020/05/11/quarkus-openshift-serverless" class="pagination--pager" title="Quarkus, a lightweight Java for Serverless
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/05/11/quarkus-openshift-serverless" rel="permalink">Quarkus, a lightweight Java for Serverless
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-05-11T00:00:00+08:00">May 11, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        2 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
+is of...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/04/27/amq-openshift" rel="permalink">AMQ Messaging on OpenShift
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-04-27T00:00:00+08:00">April 27, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        3 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">More companies are moving towards a microservices approach for their new applications.
+This approach suits today’s increasingly distributed hybrid cloud and ...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2019/04/19/prometheus-openshift" rel="permalink">Configure HostPath Storage For Prometheus on OpenShift v3.11
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2019-04-19T00:00:00+08:00">April 19, 2019</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.
+
+In OpenShift v3.11, Prometheus cluster monitoring is ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    <li><a href="/blog/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Jia Jun Ng (JJ). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/blog/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/blog/assets/js/lunr/lunr.min.js"></script>
+<script src="/blog/assets/js/lunr/lunr-store.js"></script>
+<script src="/blog/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    <script>
+  'use strict';
+
+  (function() {
+    var commentContainer = document.querySelector('#utterances-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('repo', 'jiajunngjj/blog');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+
+  
+
+
+
+
+
+  </body>
+</html>

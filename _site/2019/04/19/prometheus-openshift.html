@@ -1,0 +1,956 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Configure HostPath Storage For Prometheus on OpenShift v3.11 - JJ’s Blog</title>
+<meta name="description" content="This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.  In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.  Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.">
+
+
+  <meta name="author" content="Jia Jun Ng (JJ)">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="JJ's Blog">
+<meta property="og:title" content="Configure HostPath Storage For Prometheus on OpenShift v3.11">
+<meta property="og:url" content="http://localhost:4000/blog/2019/04/19/prometheus-openshift">
+
+
+  <meta property="og:description" content="This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.  In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.  Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2019-04-19T00:00:00+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/blog/2019/04/19/prometheus-openshift">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jia Jun Ng (JJ)",
+      "url": "http://localhost:4000/blog/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/blog/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/blog/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/blog/">
+           
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jiajunngjj.github.io/blog/">Blog</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/blog/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Jia Jun Ng (JJ)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://redhat.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-building" aria-hidden="true"></i><span class="label">Red Hat</span></a></li>
+          
+        
+          
+            <li><a href="#" rel="nofollow noopener noreferrer"><i class="fas fa-fw fas fa-map-marker-alt" aria-hidden="true"></i><span class="label">Singapore</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+
+      
+
+      
+        <li>
+          <a href="mailto:ngjiajun13@gmail.com">
+            <meta itemprop="email" content="ngjiajun13@gmail.com" />
+            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
+          </a>
+        </li>
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Configure HostPath Storage For Prometheus on OpenShift v3.11">
+    <meta itemprop="description" content="This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.">
+    <meta itemprop="datePublished" content="2019-04-19T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Configure HostPath Storage For Prometheus on OpenShift v3.11
+</h1>
+          
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2019-04-19T00:00:00+08:00">April 19, 2019</time>
+    
+
+    
+      
+      <span class="post__meta-sep"></span>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+        <p>This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.</p>
+
+<p>In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.</p>
+
+<p>Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.</p>
+
+<h2 id="configuration-steps">Configuration Steps</h2>
+<h3 id="assumptions">Assumptions</h3>
+<ul>
+  <li>HostPath SCC is already created</li>
+  <li>HostPath SCC set to allow hostpath directory volume plugin</li>
+  <li>Granting access to this SCC to all users</li>
+</ul>
+
+<h3 id="inventory-file">Inventory file</h3>
+<p>It is mandatory set the following variables in the inventory file:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>openshift_cluster_monitoring_operator_node_selector={‘role’:’metrics’}</td>
+      <td>I have created a label, “role=metrics” to land the pods on the dedicated nodes for Prometheus/Alertmanager. These nodes should contain the HostPath for persistent storage.</td>
+    </tr>
+    <tr>
+      <td>openshift_cluster_monitoring_operator_prometheus_storage_capacity=50G</td>
+      <td>The persistent volume claim size for each of the Prometheus instances. This variable applies only if openshift_cluster_monitoring_operator_prometheus_storage_enabled is set to true. Defaults to 50Gi.</td>
+    </tr>
+    <tr>
+      <td>openshift_cluster_monitoring_operator_alertmanager_storage_capacity=5Gi</td>
+      <td>The persistent volume claim size for each of the Alertmanager instances. This variable applies only if openshift_cluster_monitoring_operator_alertmanager_storage_enabled is set to true. Defaults to 2Gi.</td>
+    </tr>
+    <tr>
+      <td>openshift_cluster_monitoring_operator_prometheus_storage_enabled=true</td>
+      <td>Enable persistent storage for Prometheus</td>
+    </tr>
+    <tr>
+      <td>openshift_cluster_monitoring_operator_alertmanager_storage_enabled=true</td>
+      <td>Enable persistent storage for Alertmanager</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="run-the-playbook">Run the playbook</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ansible-playbook -i &lt;INVENTORY&gt;  /usr/share/ansible/openshift-ansible/playbooks/openshift-monitoring/config.yml```
+</code></pre></div></div>
+
+<h3 id="node-hostpath-configuration">Node hostpath configuration</h3>
+<ul>
+  <li>Find the namespace ID:
+```
+$ oc get namespace openshift-monitoring -o yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    openshift.io/description: Openshift Monitoring
+    openshift.io/display-name: “”
+    openshift.io/node-selector: “”
+    openshift.io/sa.scc.mcs: s0:c11,c0
+    openshift.io/sa.scc.supplemental-groups: 1000110000/10000
+    openshift.io/sa.scc.uid-range: 1000110000/10000
+  creationTimestamp: 2019-04-29T03:48:23Z
+  labels:
+    openshift.io/cluster-monitoring: “true”
+  name: openshift-monitoring
+  resourceVersion: “15977564”
+  selfLink: /api/v1/namespaces/openshift-monitoring
+  uid: a3173b3e-6a31-11e9-b915-000c29451a06
+spec:
+  finalizers:
+    <ul>
+      <li>kubernetes
+status:
+  phase: Active
+```</li>
+    </ul>
+  </li>
+</ul>
+
+<p>In the example above, my namespace ID is 1000110000.</p>
+
+<ul>
+  <li>Change ownership and SELinux label of the HostPath:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ chown 1000110000:root /metrics/
+  $ semanage fcontext -a -t svirt_sandbox_file_t /metrics
+  $ restorecon -v /metrics/
+  $ chown 1000110000:root /alertmanager/
+  $ semanage fcontext -a -t svirt_sandbox_file_t /alertmanager
+  $ restorecon -v /alertmanager/
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="post-installation---prometheus">Post Installation - Prometheus</h3>
+<p>After the playbook has completed successfully, you will see that the pods are starting:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> $ oc get pods
+ NAME                                          READY     STATUS    RESTARTS   AGE
+ cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          1m
+ prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          28s
+  
+ NAME                                          READY     STATUS    RESTARTS   AGE
+ cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          2m
+ grafana-67cb69b946-684vc                      2/2       Running   0          55s
+ prometheus-k8s-0                              0/4       Pending   0          5s
+ prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          1m
+</code></pre></div></div>
+
+<p>By default, when openshift_cluster_monitoring_operator_prometheus_storage_enabled is set to true, it will create a default storage class and Prometheus-k8s-0 will remain in Pending state until it has successfully claims its PV. </p>
+
+<ul>
+  <li>The first thing to do is to delete the PVC created by deployment:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ oc get pvc
+  NAME                                 STATUS    VOLUME    CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  prometheus-k8s-db-prometheus-k8s-0   Pending                                                      4m
+
+  $ oc delete pvc prometheus-k8s-db-prometheus-k8s-0
+  persistentvolumeclaim "prometheus-k8s-db-prometheus-k8s-0" deleted
+</code></pre></div>    </div>
+  </li>
+  <li>Create the new PV for Prometheus:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ vi pv-prometheus-0.yml
+
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-0
+  spec:
+    capacity:
+      storage: 100G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /metrics
+    persistentVolumeReclaimPolicy: Retain
+  ClaimRef:
+    name: prometheus-k8s-db-prometheus-k8s-0
+    namespace: openshift-monitoring
+
+  $ oc create -f pv-prometheus-0.yml
+</code></pre></div>    </div>
+    <p>Note that /metrics is the HostPath attached to the node.</p>
+  </li>
+  <li>Create the new PVC for Prometheus:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ vi pvc-prometheus-0.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-0
+  spec:
+    resources:
+      requests:
+        storage: 100G
+    accessModes:
+      - ReadWriteOnce
+
+  $ oc create -f pvc-prometheus-0.yml -n openshift-monitoring
+</code></pre></div>    </div>
+  </li>
+  <li>After this is done, the second Prometheus pod will start to spin up. So, repeat the steps 1 to 3, creating a new PV and PVC with prometheus-k8s-db-prometheus-k8s-1:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ vi pv-prometheus-1.yml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-1
+  spec:
+    capacity:
+      storage: 100G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /metrics
+    persistentVolumeReclaimPolicy: Retain
+  ClaimRef:
+    name: prometheus-k8s-db-prometheus-k8s-1
+    namespace: openshift-monitoring
+
+
+  $ vi pvc-prometheus-1.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: prometheus-k8s-db-prometheus-k8s-1
+  spec:
+    resources:
+      requests:
+        storage: 100G
+  accessModes:
+    - ReadWriteOnce
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="post-installation--alertmanager">Post Installation - Alertmanager</h3>
+<p>After two Prometheus pods are spun up successfully, Alertmanager pods will be spinning up right after.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ oc get pods
+  NAME                                          READY     STATUS    RESTARTS   AGE
+  alertmanager-main-0                           0/3       Pending   0          42s
+  cluster-monitoring-operator-6566bf44b-sb8wk   1/1       Running   0          14m
+  grafana-67cb69b946-684vc                      2/2       Running   0          13m
+  prometheus-k8s-0                              4/4       Running   1          1m
+  prometheus-k8s-1                              4/4       Running   3          6m
+  prometheus-operator-77bc9b6c68-gw92h          1/1       Running   0          13m
+</code></pre></div></div>
+
+<p>Again, the alertmanager will remain at Pending status until it has claimed the PV successfully.</p>
+
+<ul>
+  <li>Delete the Alertmanager PVC created by deployment:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ oc get pvc
+      NAME                                       STATUS    VOLUME                               CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+      alertmanager-main-db-alertmanager-main-0   Pending                                                                                 41s
+      prometheus-k8s-db-prometheus-k8s-0         Bound     prometheus-k8s-db-prometheus-k8s-0   100G       RWO                           7m
+      prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1   100G       RWO                           4m
+
+ $ oc delete pvc alertmanager-main-db-alertmanager-main-0
+ persistentvolumeclaim "alertmanager-main-db-alertmanager-main-0" deleted
+</code></pre></div>    </div>
+  </li>
+  <li>Create the new PV for Alertmanager:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ vi pv-alertmanager-0.yml
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: alertmanager-main-db-alertmanager-main-0
+  spec:
+    capacity:
+      storage: 10G
+    accessModes:
+      - ReadWriteOnce
+    hostPath:
+      path: /alertmanager
+    persistentVolumeReclaimPolicy: Retain
+  storageClassName: alertmanager-storageclass
+  ClaimRef:
+    name: alertmanager-main-db-alertmanager-main-0
+    namespace: openshift-monitoring
+
+  $ oc create -f pv-alertmanager-0.yml
+</code></pre></div>    </div>
+    <p>Note that /alertmanager is the HostPath attached to the node.</p>
+  </li>
+  <li>Create the PVC for Alertmanager:
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ vi pvc-alertmanager-0.yml
+  apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: alertmanager-main-db-alertmanager-main-0
+  spec:
+    resources:
+      requests:
+        storage: 10G
+    accessModes:
+      - ReadWriteOnce
+
+  $ oc create -f pvc-alertmanager-0.yml -n openshift-monitoring
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>After this is done, the second and third Alertmanager pod will start to spin up. So, repeat the steps 1 to 3, creating a new PV and PVC with alertmanager-main-db-alertmanager-main-1 and alertmanager-main-db-alertmanager-main-2 respectively.</p>
+
+<p>The end result for the PV and PVC in OpenShift-Monitoring:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  $ oc get pv
+  NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                                                       STORAGECLASS   REASON    AGE
+  alertmanager-main-db-alertmanager-main-0   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-0                            5m
+  alertmanager-main-db-alertmanager-main-1   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-1                            1m
+  alertmanager-main-db-alertmanager-main-2   10G        RWO            Retain           Bound     openshift-monitoring/alertmanager-main-db-alertmanager-main-2                            8s
+  prometheus-k8s-db-prometheus-k8s-0         100G       RWO            Retain           Bound     openshift-monitoring/prometheus-k8s-db-prometheus-k8s-0                                  13m
+  prometheus-k8s-db-prometheus-k8s-1         100G       RWO            Retain           Bound     openshift-monitoring/prometheus-k8s-db-prometheus-k8s-1                                  11m
+
+  $ oc get pvc
+  NAME                                       STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+  alertmanager-main-db-alertmanager-main-0   Bound     alertmanager-main-db-alertmanager-main-0   10G        RWO                           3m
+  alertmanager-main-db-alertmanager-main-1   Bound     alertmanager-main-db-alertmanager-main-1   10G        RWO                           1m
+  alertmanager-main-db-alertmanager-main-2   Bound     alertmanager-main-db-alertmanager-main-2   10G        RWO                           6s
+  prometheus-k8s-db-prometheus-k8s-0         Bound     prometheus-k8s-db-prometheus-k8s-0         100G       RWO                           13m
+  prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1         100G       RWO                           10m
+</code></pre></div></div>
+
+<h3 id="references">References</h3>
+<ul>
+  <li><a href="https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage">https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage</a></li>
+</ul>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/blog/tags/#openshift-monitoring" class="page__taxonomy-item" rel="tag">openshift monitoring</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#openshift" class="page__taxonomy-item" rel="tag">openshift</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#prometheus" class="page__taxonomy-item" rel="tag">prometheus</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/blog/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2019-04-19T00:00:00+08:00">April 19, 2019</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Configure+HostPath+Storage+For+Prometheus+on+OpenShift+v3.11%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift&title=Configure HostPath Storage For Prometheus on OpenShift v3.11" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="#" class="pagination--pager disabled">Previous</a>
+    
+    
+      <a href="/blog/2020/04/27/amq-openshift" class="pagination--pager" title="AMQ Messaging on OpenShift
+">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules with Red Hat Decision Manager
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        5 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/05/11/quarkus-openshift-serverless" rel="permalink">Quarkus, a lightweight Java for Serverless
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-05-11T00:00:00+08:00">May 11, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        3 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
+is of...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/blog/2020/04/27/amq-openshift" rel="permalink">AMQ Messaging on OpenShift
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-04-27T00:00:00+08:00">April 27, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        3 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">More companies are moving towards a microservices approach for their new applications.
+This approach suits today’s increasingly distributed hybrid cloud and ...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+          <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
+        
+      
+    
+
+    <li><a href="/blog/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2020 Jia Jun Ng (JJ). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/blog/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/blog/assets/js/lunr/lunr.min.js"></script>
+<script src="/blog/assets/js/lunr/lunr-store.js"></script>
+<script src="/blog/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    <script>
+  'use strict';
+
+  (function() {
+    var commentContainer = document.querySelector('#utterances-comments');
+
+    if (!commentContainer) {
+      return;
+    }
+
+    var script = document.createElement('script');
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('repo', 'jiajunngjj/blog');
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'github-light');
+    script.setAttribute('crossorigin', 'anonymous');
+
+    commentContainer.appendChild(script);
+  })();
+</script>
+
+  
+
+
+
+
+
+  </body>
+</html>
