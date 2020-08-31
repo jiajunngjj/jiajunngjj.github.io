@@ -2,8 +2,8 @@
 main:
   - title: "Home"
     url: https://jiajunngjj.github.io/
-  - title: "Blog"
-    url: https://jiajunngjj.github.io/blog/
+  - title: "Archives"
+    url: https://jiajunngjj.github.io/archives/
 #  - title: "Quick-Start Guide"
 #    url: https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/
   # - title: "About"

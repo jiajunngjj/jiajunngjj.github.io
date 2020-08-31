@@ -97,7 +97,7 @@ author:
   avatar           : "/assets/images/github.jpeg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : "Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions."
   #location         : "Singapore"
-  email            : "ngjiajun13@gmail.com"
+  #email            : "ngjiajun13@gmail.com"
   links:
     - label: "Red Hat"
       icon: "fas fa-fw fa-building"
@@ -107,7 +107,7 @@ author:
       url: "#"
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      # url: "mailto:your.name@email.com"
+      url: "mailto:ngjiajun13@gmail.com"
     - label: "Website"
       icon: "fas fa-fw fa-link"
       # url: "https://your-website.com"
@@ -119,7 +119,10 @@ author:
       # url: "https://facebook.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      # url: "https://github.com/"
+      url: "https://github.com/jiajunngjj"
+    - label: "Linkedin"
+      icon: "fab fa-fw fa-linkedin"
+      url: "https://www.linkedin.com/in/jiajunngjj"
     - label: "Instagram"
       icon: "fab fa-fw fa-instagram"
       # url: "https://instagram.com/"
@@ -135,7 +138,7 @@ footer:
       # url:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/jiajunngjj"
+      # url: "https://github.com/jiajunngjj"
     - label: "GitLab"
       icon: "fab fa-fw fa-gitlab"
       # url:
@@ -147,7 +150,7 @@ footer:
       # url:
     - label: "Linkedin"
       icon: "fab fa-fw fa-linkedin"
-      url: "https://www.linkedin.com/in/jiajunngjj"
+      # url: "https://www.linkedin.com/in/jiajunngjj"
 
 
 # Reading Files

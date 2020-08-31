@@ -20,7 +20,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="JJ's Blog">
 <meta property="og:title" content="Configure HostPath Storage For Prometheus on OpenShift v3.11">
-<meta property="og:url" content="http://localhost:4000/blog/2019/04/19/prometheus-openshift">
+<meta property="og:url" content="http://localhost:4000/2019/04/19/prometheus-openshift">
 
 
   <meta property="og:description" content="This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.  In OpenShift v3.11, Prometheus cluster monitoring is now fully supported and deployed by default. As the monitoring stack is fairly new, there are many on-going discussions on supported storage plugins. And the documentation does not cover the detailed steps of setting up the storage. The configurability is also limited with Operator in placed which “protects” the configuration.  Through various implementations with HostPath requirement, I have figured a way to make HostPath storage works with Operator.">
@@ -42,7 +42,7 @@
   
 
 
-<link rel="canonical" href="http://localhost:4000/blog/2019/04/19/prometheus-openshift">
+<link rel="canonical" href="http://localhost:4000/2019/04/19/prometheus-openshift">
 
 
 
@@ -53,7 +53,7 @@
     
       "@type": "Person",
       "name": "Jia Jun Ng (JJ)",
-      "url": "http://localhost:4000/blog/"
+      "url": "http://localhost:4000/"
     
   }
 </script>
@@ -66,7 +66,7 @@
 <!-- end _includes/seo.html -->
 
 
-<link href="/blog/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
 
 <!-- https://t.co/dKP3o1e -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,7 +76,7 @@
 </script>
 
 <!-- For all browsers -->
-<link rel="stylesheet" href="/blog/assets/css/main.css">
+<link rel="stylesheet" href="/assets/css/main.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
 
 <!--[if IE]>
@@ -125,14 +125,14 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         
-        <a class="site-title" href="/blog/">
+        <a class="site-title" href="/">
            
           
         </a>
         <ul class="visible-links"><li class="masthead__menu-item">
               <a href="https://jiajunngjj.github.io/">Home</a>
             </li><li class="masthead__menu-item">
-              <a href="https://jiajunngjj.github.io/blog/">Blog</a>
+              <a href="https://jiajunngjj.github.io/archives/">Archives</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -169,7 +169,7 @@
   
     <div class="author__avatar">
       
-        <img src="/blog/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+        <img src="/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
       
     </div>
   
@@ -202,13 +202,21 @@
           
         
           
-        
+            <li><a href="mailto:ngjiajun13@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
           
         
           
         
           
         
+          
+        
+          
+            <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
           
         
           
@@ -217,13 +225,6 @@
 
       
 
-      
-        <li>
-          <a href="mailto:ngjiajun13@gmail.com">
-            <meta itemprop="email" content="ngjiajun13@gmail.com" />
-            <i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span>
-          </a>
-        </li>
       
 
       
@@ -642,19 +643,19 @@ status:
     
       
       
-      <a href="/blog/tags/#openshift-monitoring" class="page__taxonomy-item" rel="tag">openshift monitoring</a><span class="sep">, </span>
+      <a href="/tags/#openshift-monitoring" class="page__taxonomy-item" rel="tag">openshift monitoring</a><span class="sep">, </span>
     
       
       
-      <a href="/blog/tags/#openshift" class="page__taxonomy-item" rel="tag">openshift</a><span class="sep">, </span>
+      <a href="/tags/#openshift" class="page__taxonomy-item" rel="tag">openshift</a><span class="sep">, </span>
     
       
       
-      <a href="/blog/tags/#prometheus" class="page__taxonomy-item" rel="tag">prometheus</a><span class="sep">, </span>
+      <a href="/tags/#prometheus" class="page__taxonomy-item" rel="tag">prometheus</a><span class="sep">, </span>
     
       
       
-      <a href="/blog/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
+      <a href="/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
     
     </span>
   </p>
@@ -673,13 +674,13 @@ status:
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Configure+HostPath+Storage+For+Prometheus+on+OpenShift+v3.11%20http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Configure+HostPath+Storage+For+Prometheus+on+OpenShift+v3.11%20http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift&title=Configure HostPath Storage For Prometheus on OpenShift v3.11" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F19%2Fprometheus-openshift&title=Configure HostPath Storage For Prometheus on OpenShift v3.11" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2Fblog%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2019%2F04%2F19%2Fprometheus-openshift" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -689,7 +690,7 @@ status:
       <a href="#" class="pagination--pager disabled">Previous</a>
     
     
-      <a href="/blog/2020/04/27/amq-openshift" class="pagination--pager" title="AMQ Messaging on OpenShift
+      <a href="/2020/04/27/amq-openshift" class="pagination--pager" title="AMQ Messaging on OpenShift
 ">Next</a>
     
   </nav>
@@ -714,7 +715,7 @@ status:
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/blog/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules with Red Hat Decision Manager
+        <a href="/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules with Red Hat Decision Manager
 </a>
       
     </h2>
@@ -762,7 +763,7 @@ status:
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/blog/2020/05/11/quarkus-openshift-serverless" rel="permalink">Quarkus, a lightweight Java for Serverless
+        <a href="/2020/05/11/quarkus-openshift-serverless" rel="permalink">Quarkus, a lightweight Java for Serverless
 </a>
       
     </h2>
@@ -810,7 +811,7 @@ is of...</p>
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/blog/2020/04/27/amq-openshift" rel="permalink">AMQ Messaging on OpenShift
+        <a href="/2020/04/27/amq-openshift" rel="permalink">AMQ Messaging on OpenShift
 </a>
       
     </h2>
@@ -874,7 +875,7 @@ This approach suits today’s increasingly distributed hybrid cloud and ...</p>
       <footer>
         <!-- start custom footer snippets -->
 <script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- end custom footer snippets -->
+<!-- end customooter snippets -->
         <div class="page__footer-follow">
   <ul class="social-icons">
     
@@ -888,8 +889,6 @@ This approach suits today’s increasingly distributed hybrid cloud and ...</p>
         
       
         
-          <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
-        
       
         
       
@@ -897,13 +896,11 @@ This approach suits today’s increasingly distributed hybrid cloud and ...</p>
       
         
       
-        
-          <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i> Linkedin</a></li>
         
       
     
 
-    <li><a href="/blog/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
   </ul>
 </div>
 
@@ -913,14 +910,14 @@ This approach suits today’s increasingly distributed hybrid cloud and ...</p>
     </div>
 
     
-  <script src="/blog/assets/js/main.min.js"></script>
+  <script src="/assets/js/main.min.js"></script>
 
 
 
 
-<script src="/blog/assets/js/lunr/lunr.min.js"></script>
-<script src="/blog/assets/js/lunr/lunr-store.js"></script>
-<script src="/blog/assets/js/lunr/lunr-en.js"></script>
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
 
 
 
@@ -937,7 +934,7 @@ This approach suits today’s increasingly distributed hybrid cloud and ...</p>
 
     var script = document.createElement('script');
     script.setAttribute('src', 'https://utteranc.es/client.js');
-    script.setAttribute('repo', 'jiajunngjj/blog');
+    script.setAttribute('repo', 'jiajunngjj/jiajunngjj.github.io');
     script.setAttribute('issue-term', 'pathname');
     script.setAttribute('theme', 'github-light');
     script.setAttribute('crossorigin', 'anonymous');
