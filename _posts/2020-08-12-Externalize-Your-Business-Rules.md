@@ -14,7 +14,7 @@ In this post, I will be sharing my experience on using Red Hat Decision Manager 
 code.
 
 Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
-The part which involves business rules is when the [ML flow](https://mlflow.org/) computes a score from the raw data received, and the application needs to make a 
+The part which involves business rules is when a prediction model computes a score from the raw data received, and the application needs to make a 
 decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.
 
 Before going into my setup, let's understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
