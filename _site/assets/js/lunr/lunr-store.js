@@ -17,9 +17,15 @@ var store = [{
         "url": "http://localhost:4000/2020/05/11/quarkus-openshift-serverless",
         "teaser": null
       },{
-        "title": "Externalize Your Business Rules with Red Hat Decision Manager",
+        "title": "Externalize Your Business Rules With Red Hat Decision Manager",
         "excerpt":"In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application code. Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a...","categories": [],
         "tags": ["redhat","decision manager","drools","jboss","appdev"],
         "url": "http://localhost:4000/2020/08/12/externalize-your-business-rules",
+        "teaser": null
+      },{
+        "title": "Introduction to Dev + Ops",
+        "excerpt":"The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup. What is DevOps...","categories": [],
+        "tags": ["redhat","devops","appdev"],
+        "url": "http://localhost:4000/2020/10/14/intro-to-devops",
         "teaser": null
       }]

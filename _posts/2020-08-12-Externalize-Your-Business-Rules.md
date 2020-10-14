@@ -1,5 +1,5 @@
 ---
-title: "Externalize Your Business Rules with Red Hat Decision Manager"
+title: "Externalize Your Business Rules With Red Hat Decision Manager"
 tags: 
   - redhat
   - decision manager
@@ -8,10 +8,10 @@ tags:
   - appdev
 permalink: /:year/:month/:day/externalize-your-business-rules
 ---
-![Red Hat Decision Manager](https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png)
-
 In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
 code.
+
+![Red Hat Decision Manager](https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png)
 
 Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
 The part which involves business rules is when a prediction model computes a score from the raw data received, and the application needs to make a 

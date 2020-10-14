@@ -1,10 +1,121 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-08-31T17:16:34+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Externalize Your Business Rules with Red Hat Decision Manager</title><link href="http://localhost:4000/2020/08/12/externalize-your-business-rules" rel="alternate" type="text/html" title="Externalize Your Business Rules with Red Hat Decision Manager" /><published>2020-08-12T00:00:00+08:00</published><updated>2020-08-12T00:00:00+08:00</updated><id>http://localhost:4000/2020/08/12/Externalize-Your-Business-Rules</id><content type="html" xml:base="http://localhost:4000/2020/08/12/externalize-your-business-rules">&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png&quot; alt=&quot;Red Hat Decision Manager&quot; /&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-10-14T12:13:32+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Introduction to Dev + Ops</title><link href="http://localhost:4000/2020/10/14/intro-to-devops" rel="alternate" type="text/html" title="Introduction to Dev + Ops" /><published>2020-10-14T00:00:00+08:00</published><updated>2020-10-14T00:00:00+08:00</updated><id>http://localhost:4000/2020/10/14/Dev+Ops</id><content type="html" xml:base="http://localhost:4000/2020/10/14/intro-to-devops">&lt;p&gt;The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
+the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.&lt;/p&gt;
 
-&lt;p&gt;In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95935658-54c94000-0e06-11eb-8774-03e10cea6aa2.png&quot; alt=&quot;DevOps&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-devops&quot;&gt;What is DevOps&lt;/h2&gt;
+&lt;p&gt;DevOps comes from the two words “development” and “operations”, and it is all about combining the power of 
+developers and operations.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Definition of DevOps&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“DevOps is a set of practices that combines software development (Dev) and IT operations (Ops). It aims to shorten the systems development life cycle and provide continuous delivery with high software quality” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;DevOps is a process framework which fosters agility in software development, and collaboration between development and operations team to deploy applications faster
+in a repeatable and automated manner. With DevOps, businesses can expect faster time to market, increased productivity and revenue, business agility and many more.
+Also, DevOps comprises a set of principles for software delivery and is a cultural change which involves collaboration of cross-functional teams which includes 
+development, operations, security, test and business.&lt;/p&gt;
+
+&lt;h2 id=&quot;challenges-faced-before-devops&quot;&gt;Challenges faced before DevOps&lt;/h2&gt;
+&lt;p&gt;Below are some of the typical challenges faced by the development and operations team before DevOps process framework is in placed:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;How to manage the demand for resources when it comes to scaling&lt;/li&gt;
+  &lt;li&gt;How to handle tweaks in an application in a production environment&lt;/li&gt;
+  &lt;li&gt;Long release cycle requires more time to troubleshoot and resolve issues that occur during deployment in production environment&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The misalignment and lack of collaboration between the two departments are often the culprit for the challenges. For instance when it comes to scaling,
+how can the application be deployed when lots of time is needed to prepare the infrastructure? And when it comes to addressing deployment error,
+how to ensure that there is zero to minimum downtime, and the rolling back to the previous version can be done immediately?&lt;/p&gt;
+
+&lt;h2 id=&quot;how-devops-addresses-these-challenges&quot;&gt;How DevOps addresses these challenges&lt;/h2&gt;
+&lt;p&gt;DevOps follows a modular approach towards software development with a clear plan on how to break down existing monolithic applications into microservices. 
+Instead of having big releases of application features, DevOps allows the roll out of bite-size features to their customers through a series of release iterations.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95830684-a6bc8800-0d6a-11eb-948e-732b5264b674.png&quot; alt=&quot;DevOps life cycle&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;DevOps adopts a few practices in its life cycle (simplified):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Continuous planning&lt;/strong&gt; - identifying resources and priorities&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Collaborative development&lt;/strong&gt; - frequent code integrations and automatic build&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Continuous testing&lt;/strong&gt; - test application, find defects, rebuild if necessary&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Continuous release and deployment&lt;/strong&gt; - application goes Live if it passes the testing phase&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Continuous monitoring&lt;/strong&gt; - monitor performance as per requirements, early feedback helps to steer projects in the right direction&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Continuous feedback and optimization&lt;/strong&gt; - provide visibility on root cause which impacts business&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;cicd-pipeline&quot;&gt;CI/CD pipeline&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95941255-e9399f80-0e12-11eb-8b5b-6e95e6686b72.png&quot; alt=&quot;CICD&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://www.redhat.com/cms/managed-files/ci-cd-flow-desktop_1.png&quot;&gt;Image Source&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Definition of continuous integration (CI)&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“Continuous integration (CI) is the practice of merging all developers’ working copies to a shared mainline several times a day” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Definition of continuous delivery (CD)&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“Continuous delivery (CD) is a software engineering approach in which teams produce software in short cycles, ensuring that the software can be reliably released at any time and, when releasing the software, doing so manually” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;strong&gt;Definition of continuous deployment (CI)&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“Continuous deployment (CD) is a software engineering approach in which software functionalities are delivered frequently through automated deployments” - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;To implement DevOps process framework, a CI/CD pipeline needs to be created in an automated and repeatable way:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95937080-88599980-0e09-11eb-98b9-896599d31577.png&quot; alt=&quot;Pipeline&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;A CI/CD pipeline serves as the backbone of the DevOps process framework. It comprises a set of tools from conceptualize to delivery of applications from the planning to production phase.
+As mentioned above, DevOps is a cross-functional discipline, multiple tools are needed to cover the variety of stages, personas and activities. The set of tools in the pipeline are integrated
+and the flow of code through the different phases is automated to avoid human error and delays.&lt;/p&gt;
+
+&lt;h2 id=&quot;devops-tools-as-per-life-cycle&quot;&gt;DevOps Tools (as per life cycle)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95940452-f48bcb80-0e10-11eb-88cc-4fc404a8e3db.png&quot; alt=&quot;DevOps Tools&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://ncplinc.com/includes/images/blog/ncpl-open-source-devops-tools.png&quot;&gt;Image Source&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;Below are some suggestions:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Planning&lt;/strong&gt; - Trello, Kanboard, Jira, Slack&lt;br /&gt;
+&lt;strong&gt;Code&lt;/strong&gt; - Git, SVN, Bitbucket, Eclipse Che&lt;br /&gt;
+&lt;strong&gt;Build&lt;/strong&gt; - Maven, Gradle, Packer&lt;br /&gt;
+&lt;strong&gt;Test&lt;/strong&gt; - Apache JMeter, JUnit, Selenium &lt;br /&gt;
+&lt;strong&gt;Release, Deploy, Operate&lt;/strong&gt; - Kubernetes, Ansible, Terraform, Go, Docker&lt;br /&gt;
+&lt;strong&gt;Monitoring&lt;/strong&gt; - Grafana, Prometheus, Fluentd, Nagios, Splunk, Istio, Elastic&lt;br /&gt;
+&lt;strong&gt;Feedback&lt;/strong&gt; - Slack, Jira&lt;/p&gt;
+
+&lt;p&gt;Note that there are tons of open source tools available to help businesses to build their pipeline where businesses can evaluate based on their requirements.&lt;/p&gt;
+
+&lt;h2 id=&quot;simple-setup---devops-with-openshift-red-hats-flavour-of-kubernetes&quot;&gt;Simple Setup - DevOps with OpenShift (Red Hat’s flavour of Kubernetes)&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95900543-a4871780-0dc4-11eb-84a1-a27c93af3421.png&quot; alt=&quot;DevOps with OpenShift&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The main components of the setup include OpenShift and Jenkins.
+OpenShift is the container orchestration platform to orchestrate the containers (microservices), with a Jenkins pipeline running outside of OpenShift clusters to
+facilitate the deployment of applications across different environments (Dev, Test, UAT and PROD). Application testings should be conducted before deployment to each environment. For example, system and smoke test are done in DEV, 
+while functional and security tests are done in TEST.&lt;/p&gt;
+
+&lt;p&gt;The pipeline starts when developers commit their codes to the master branch.
+The whole pipeline is automated and repeatable. Should the application deployment fails at certain stage of the pipeline, the current Live
+application is not affected and developers can continue to make changes and commit the codes again to trigger the pipeline. A release manager is also in placed
+to approve the deployment to PROD manually (As PROD is serving Live traffic, it usually requires manual approval).&lt;/p&gt;
+
+&lt;p&gt;DevOps with OpenShift is a cloud native approach aligned with a hybrid and multi cloud strategy. OpenShift provides
+standardized environment for developers regardless of underlying infrastructure (AWS, Microsoft Azure, Google Cloud, etc). As such, businesses can truly enjoy application mobility and portability across 
+different infrastructure.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;DevOps adoption is crucial to the success of a digital transformation journey. 
+It enables developers and operations to work closely as one unit throughout all the phases of an application development.
+DevOps is more than just a project, it is a cultural change which requires companies to break away from conventional mindset.
+To better understand DevOps, I strongly recommend a novel, The Phoenix Project, it talks about transformation journey and illustrates common problems which are similar to real life.&lt;/p&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="redhat" /><category term="devops" /><category term="appdev" /><summary type="html">The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.</summary></entry><entry><title type="html">Externalize Your Business Rules With Red Hat Decision Manager</title><link href="http://localhost:4000/2020/08/12/externalize-your-business-rules" rel="alternate" type="text/html" title="Externalize Your Business Rules With Red Hat Decision Manager" /><published>2020-08-12T00:00:00+08:00</published><updated>2020-08-12T00:00:00+08:00</updated><id>http://localhost:4000/2020/08/12/Externalize-Your-Business-Rules</id><content type="html" xml:base="http://localhost:4000/2020/08/12/externalize-your-business-rules">&lt;p&gt;In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
 code.&lt;/p&gt;
 
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png&quot; alt=&quot;Red Hat Decision Manager&quot; /&gt;&lt;/p&gt;
+
 &lt;p&gt;Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
-The part which involves business rules is when the &lt;a href=&quot;https://mlflow.org/&quot;&gt;ML flow&lt;/a&gt; computes a score from the raw data received, and the application needs to make a 
+The part which involves business rules is when a prediction model computes a score from the raw data received, and the application needs to make a 
 decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.&lt;/p&gt;
 
 &lt;p&gt;Before going into my setup, let’s understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
@@ -91,7 +202,7 @@ There are many use cases which RHDM can be part of the solution from fraud detec
 
 &lt;p&gt;While driving applications with external business rules is beneficial, 
 it is also important to note that it is an additional layer to an application architecture, hence the application and its requirements should be carefully designed to ensure it can leverage on the external engine with
-minimal to zero application code change when a rule changes.&lt;/p&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="redhat" /><category term="decision manager" /><category term="drools" /><category term="jboss" /><category term="appdev" /><summary type="html"></summary></entry><entry><title type="html">Quarkus, a lightweight Java for Serverless</title><link href="http://localhost:4000/2020/05/11/quarkus-openshift-serverless" rel="alternate" type="text/html" title="Quarkus, a lightweight Java for Serverless" /><published>2020-05-11T00:00:00+08:00</published><updated>2020-05-11T00:00:00+08:00</updated><id>http://localhost:4000/2020/05/11/Quarkus-Openshift-Serverless</id><content type="html" xml:base="http://localhost:4000/2020/05/11/quarkus-openshift-serverless">&lt;p&gt;Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
+minimal to zero application code change when a rule changes.&lt;/p&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="redhat" /><category term="decision manager" /><category term="drools" /><category term="jboss" /><category term="appdev" /><summary type="html">In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application code.</summary></entry><entry><title type="html">Quarkus, a lightweight Java for Serverless</title><link href="http://localhost:4000/2020/05/11/quarkus-openshift-serverless" rel="alternate" type="text/html" title="Quarkus, a lightweight Java for Serverless" /><published>2020-05-11T00:00:00+08:00</published><updated>2020-05-11T00:00:00+08:00</updated><id>http://localhost:4000/2020/05/11/Quarkus-Openshift-Serverless</id><content type="html" xml:base="http://localhost:4000/2020/05/11/quarkus-openshift-serverless">&lt;p&gt;Java has been around for more than 20 years and is still popular among developers today. However, with the digital landscape moving towards cloud, Java
 is often seems as an unfavourable option because of its heavy-duty performance.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/81423897-ad295100-9187-11ea-8baf-94e0e232fb88.png&quot; alt=&quot;Quarkus Logo&quot; /&gt;&lt;/p&gt;

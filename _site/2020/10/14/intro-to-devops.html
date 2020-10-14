@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Externalize Your Business Rules With Red Hat Decision Manager - JJ’s Blog</title>
-<meta name="description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application  code.">
+<!-- begin _includes/seo.html --><title>Introduction to Dev + Ops - JJ’s Blog</title>
+<meta name="description" content="The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing  the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.">
 
 
   <meta name="author" content="Jia Jun Ng (JJ)">
@@ -19,30 +19,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="JJ's Blog">
-<meta property="og:title" content="Externalize Your Business Rules With Red Hat Decision Manager">
-<meta property="og:url" content="http://localhost:4000/2020/08/12/externalize-your-business-rules">
+<meta property="og:title" content="Introduction to Dev + Ops">
+<meta property="og:url" content="http://localhost:4000/2020/10/14/intro-to-devops">
 
 
-  <meta property="og:description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application  code.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2020-08-12T00:00:00+08:00">
+  <meta property="og:description" content="The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing  the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2020-10-14T00:00:00+08:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/2020/08/12/externalize-your-business-rules">
+
+<link rel="canonical" href="http://localhost:4000/2020/10/14/intro-to-devops">
 
 
 
@@ -288,15 +288,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Externalize Your Business Rules With Red Hat Decision Manager">
-    <meta itemprop="description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application code.">
-    <meta itemprop="datePublished" content="2020-08-12T00:00:00+08:00">
+    <meta itemprop="headline" content="Introduction to Dev + Ops">
+    <meta itemprop="description" content="The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.">
+    <meta itemprop="datePublished" content="2020-10-14T00:00:00+08:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Externalize Your Business Rules With Red Hat Decision Manager
+          <h1 id="page-title" class="page__title" itemprop="headline">Introduction to Dev + Ops
 </h1>
           
 
@@ -306,7 +306,7 @@
     
       
       <i class="far fa-calendar-alt" aria-hidden="true"></i>
-      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+      <time datetime="2020-10-14T00:00:00+08:00">October 14, 2020</time>
     
 
     
@@ -321,7 +321,7 @@
 
       <i class="far fa-clock" aria-hidden="true"></i>
       
-        4 minute read
+        5 minute read
       
     
 
@@ -332,101 +332,118 @@
 
       <section class="page__content" itemprop="text">
         
-        <p>In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
-code.</p>
+        <p>The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
+the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.</p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png" alt="Red Hat Decision Manager" /></p>
+<p><img src="https://user-images.githubusercontent.com/25560159/95935658-54c94000-0e06-11eb-8774-03e10cea6aa2.png" alt="DevOps" /></p>
 
-<p>Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
-The part which involves business rules is when a prediction model computes a score from the raw data received, and the application needs to make a 
-decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.</p>
+<h2 id="what-is-devops">What is DevOps</h2>
+<p>DevOps comes from the two words “development” and “operations”, and it is all about combining the power of 
+developers and operations.</p>
 
-<p>Before going into my setup, let’s understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
-folks. Non-technical folks like the business people know the rules and regulations policy but do not understand application code. It will be difficult to manage the rules especially when 
-business applications can contain tens of thousands of rules which are continually changing. Therefore, there will be impact when it comes to adding, removing or changing rules.
-As such, an external business rules engine helps to decouple application code from business rules and allows a centralized management of rules.</p>
-
-<h2 id="concepts">Concepts</h2>
-<p>RHDM is based on the <a href="https://www.drools.org/">Drools</a> project, one of the widest used rules engines in the industry which many in-house applications are already using.</p>
-
-<p><img src="https://user-images.githubusercontent.com/25560159/90094510-b74b8480-dd60-11ea-91cf-5f5ed519f2e3.png" alt="Drools Engine" /></p>
-
-<p>The decision engine operates using the following basic components:</p>
-<ul>
-  <li><strong>Rules</strong>: Business rules or DMN decisions that you define. All rules must contain at a minimum the conditions that trigger the rule and the actions that the rule dictates.</li>
-  <li><strong>Facts</strong>: Data that enters or changes in the decision engine that the decision engine matches to rule conditions to execute applicable rules.</li>
-  <li><strong>Production memory</strong>: Location where rules are stored in the decision engine.</li>
-  <li><strong>Working memory</strong>: Location where facts are stored in the decision engine.</li>
-  <li><strong>Agenda</strong>: Location where activated rules are registered and sorted (if applicable) in preparation for execution.</li>
-</ul>
-
-<p><strong>What is a rules engine</strong></p>
+<p><strong>Definition of DevOps</strong></p>
 <blockquote>
-  <p>“A business rules engine is a software system that executes one or more business rules in a runtime production environment” - Wikipedia</p>
+  <p>“DevOps is a set of practices that combines software development (Dev) and IT operations (Ops). It aims to shorten the systems development life cycle and provide continuous delivery with high software quality” - Wikipedia</p>
 </blockquote>
 
-<p>A rules engine is a collection of objects with conditions and actions. Businesses can run their process model against it and let it run through the conditions.</p>
+<p>DevOps is a process framework which fosters agility in software development, and collaboration between development and operations team to deploy applications faster
+in a repeatable and automated manner. With DevOps, businesses can expect faster time to market, increased productivity and revenue, business agility and many more.
+Also, DevOps comprises a set of principles for software delivery and is a cultural change which involves collaboration of cross-functional teams which includes 
+development, operations, security, test and business.</p>
 
-<p>An example would be:</p>
+<h2 id="challenges-faced-before-devops">Challenges faced before DevOps</h2>
+<p>Below are some of the typical challenges faced by the development and operations team before DevOps process framework is in placed:</p>
 <ul>
-  <li>Company’s credit score of 50 or less will be given the status of “Disallow”.</li>
+  <li>How to manage the demand for resources when it comes to scaling</li>
+  <li>How to handle tweaks in an application in a production environment</li>
+  <li>Long release cycle requires more time to troubleshoot and resolve issues that occur during deployment in production environment</li>
 </ul>
 
-<p>These are a few benefits of using a rules engine:</p>
+<p>The misalignment and lack of collaboration between the two departments are often the culprit for the challenges. For instance when it comes to scaling,
+how can the application be deployed when lots of time is needed to prepare the infrastructure? And when it comes to addressing deployment error,
+how to ensure that there is zero to minimum downtime, and the rolling back to the previous version can be done immediately?</p>
+
+<h2 id="how-devops-addresses-these-challenges">How DevOps addresses these challenges</h2>
+<p>DevOps follows a modular approach towards software development with a clear plan on how to break down existing monolithic applications into microservices. 
+Instead of having big releases of application features, DevOps allows the roll out of bite-size features to their customers through a series of release iterations.</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/95830684-a6bc8800-0d6a-11eb-948e-732b5264b674.png" alt="DevOps life cycle" /></p>
+
+<p>DevOps adopts a few practices in its life cycle (simplified):</p>
 <ul>
-  <li>Logical separation of rules from application code.</li>
-  <li>Human-readable rule which allows non-technical folks to understand the rules easily.</li>
-  <li>Centralization of rules provides flexibility to make adjustment easily without the need of going through the application codes.</li>
-  <li>Rules can be reused.</li>
+  <li><strong>Continuous planning</strong> - identifying resources and priorities</li>
+  <li><strong>Collaborative development</strong> - frequent code integrations and automatic build</li>
+  <li><strong>Continuous testing</strong> - test application, find defects, rebuild if necessary</li>
+  <li><strong>Continuous release and deployment</strong> - application goes Live if it passes the testing phase</li>
+  <li><strong>Continuous monitoring</strong> - monitor performance as per requirements, early feedback helps to steer projects in the right direction</li>
+  <li><strong>Continuous feedback and optimization</strong> - provide visibility on root cause which impacts business</li>
 </ul>
 
-<p><strong>What is a business rule</strong></p>
+<h2 id="cicd-pipeline">CI/CD pipeline</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/95941255-e9399f80-0e12-11eb-8b5b-6e95e6686b72.png" alt="CICD" />
+<sub><sup><a href="https://www.redhat.com/cms/managed-files/ci-cd-flow-desktop_1.png">Image Source</a></sup></sub></p>
+
+<p><strong>Definition of continuous integration (CI)</strong></p>
 <blockquote>
-  <p>“A business rule defines or constrains some aspect of business and always resolves to either true or false. It specifically involves terms, facts and rules. 
-Business rules are intended to assert business structure or to control or influence the behavior of the business.” - Wikipedia</p>
+  <p>“Continuous integration (CI) is the practice of merging all developers’ working copies to a shared mainline several times a day” - Wikipedia</p>
 </blockquote>
 
-<p>Business rules are essential to guide and help in decision making. Businesses would aim to automate them but not every business decision can be automated. The goal is to
-automate repeatable operational decisions.</p>
+<p><strong>Definition of continuous delivery (CD)</strong></p>
+<blockquote>
+  <p>“Continuous delivery (CD) is a software engineering approach in which teams produce software in short cycles, ensuring that the software can be reliably released at any time and, when releasing the software, doing so manually” - Wikipedia</p>
+</blockquote>
 
-<p>An example would be something like this:</p>
-<ul>
-  <li>A bank would disapprove a loan to a customer/company which has a credit rating of 50 or lower.</li>
-</ul>
+<p><strong>Definition of continuous deployment (CI)</strong></p>
+<blockquote>
+  <p>“Continuous deployment (CD) is a software engineering approach in which software functionalities are delivered frequently through automated deployments” - Wikipedia</p>
+</blockquote>
 
-<h2 id="set-up">Set up</h2>
-<p>There are many ways to set up RHDM and here is how I set it up:</p>
+<p>To implement DevOps process framework, a CI/CD pipeline needs to be created in an automated and repeatable way:</p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90087001-4d29e400-dd4e-11ea-8501-3dc3ebe5eaf3.png" alt="RHDM Arch" /></p>
+<p><img src="https://user-images.githubusercontent.com/25560159/95937080-88599980-0e09-11eb-98b9-896599d31577.png" alt="Pipeline" /></p>
 
-<ul>
-  <li>Decision Central - An authoring environment with GUI to allow low code development (DMN, DRL rules, decision table, etc). It also manages Kjars deployments to multiple Kie Servers.</li>
-  <li>KIE Server - It hosts the decision services which execute rules and processes. KIE server exposes its functionality via REST, JMS and Java interfaces to client applications.</li>
-  <li>Git - It stores business assets such as DMN model, decision tables, etc. In my case, it stores the DRL rules.</li>
-</ul>
+<p>A CI/CD pipeline serves as the backbone of the DevOps process framework. It comprises a set of tools from conceptualize to delivery of applications from the planning to production phase.
+As mentioned above, DevOps is a cross-functional discipline, multiple tools are needed to cover the variety of stages, personas and activities. The set of tools in the pipeline are integrated
+and the flow of code through the different phases is automated to avoid human error and delays.</p>
 
-<p>My RHDM sits on OpenShift Container Platform where my KIE server runs in a container and is able to leverage on Kubernetes’s capabilities (self-healing, etc). 
-Whenever I update and commit my rules to the Git server, it automatically triggers the CI/CD flow to deploy the new set of rules embedded into the KIE server, and roll out the
-container deployment using a rolling update strategy where the previous instance is terminated only when the new one is ready.</p>
+<h2 id="devops-tools-as-per-life-cycle">DevOps Tools (as per life cycle)</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/95940452-f48bcb80-0e10-11eb-88cc-4fc404a8e3db.png" alt="DevOps Tools" />
+<sub><sup><a href="https://ncplinc.com/includes/images/blog/ncpl-open-source-devops-tools.png">Image Source</a></sup></sub></p>
 
-<p>Here is how I write my rules in DRL:</p>
+<p>Below are some suggestions:</p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90090035-8ca7fe80-dd55-11ea-996f-611548b7477b.png" alt="DRL" /></p>
+<p><strong>Planning</strong> - Trello, Kanboard, Jira, Slack<br />
+<strong>Code</strong> - Git, SVN, Bitbucket, Eclipse Che<br />
+<strong>Build</strong> - Maven, Gradle, Packer<br />
+<strong>Test</strong> - Apache JMeter, JUnit, Selenium <br />
+<strong>Release, Deploy, Operate</strong> - Kubernetes, Ansible, Terraform, Go, Docker<br />
+<strong>Monitoring</strong> - Grafana, Prometheus, Fluentd, Nagios, Splunk, Istio, Elastic<br />
+<strong>Feedback</strong> - Slack, Jira</p>
 
-<p>I used the Decision Central to create a Result object and write my DRL rules. My DRL rules are simple, I am bascially writing a condition where a score of less than 70% would mean not fraud and a score of more than 70% means fraud. 
-Afterwhich, I built and deployed my KIE server with the DRL rules. When the KIE server is deployed successfully, my application sends a payload with the score and receives a response payload containing the status.</p>
+<p>Note that there are tons of open source tools available to help businesses to build their pipeline where businesses can evaluate based on their requirements.</p>
 
-<p>My written rules can be found on my Git Hub, <a href="https://github.com/jiajunngjj/drl-fraud-demo">https://github.com/jiajunngjj/drl-fraud-demo</a> which can be imported directly onto Decision Central as well.
-There are many ways to create your decision service and since my project is just a simple set of rules, DRL rules are sufficient.</p>
+<h2 id="simple-setup---devops-with-openshift-red-hats-flavour-of-kubernetes">Simple Setup - DevOps with OpenShift (Red Hat’s flavour of Kubernetes)</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/95900543-a4871780-0dc4-11eb-84a1-a27c93af3421.png" alt="DevOps with OpenShift" /></p>
+
+<p>The main components of the setup include OpenShift and Jenkins.
+OpenShift is the container orchestration platform to orchestrate the containers (microservices), with a Jenkins pipeline running outside of OpenShift clusters to
+facilitate the deployment of applications across different environments (Dev, Test, UAT and PROD). Application testings should be conducted before deployment to each environment. For example, system and smoke test are done in DEV, 
+while functional and security tests are done in TEST.</p>
+
+<p>The pipeline starts when developers commit their codes to the master branch.
+The whole pipeline is automated and repeatable. Should the application deployment fails at certain stage of the pipeline, the current Live
+application is not affected and developers can continue to make changes and commit the codes again to trigger the pipeline. A release manager is also in placed
+to approve the deployment to PROD manually (As PROD is serving Live traffic, it usually requires manual approval).</p>
+
+<p>DevOps with OpenShift is a cloud native approach aligned with a hybrid and multi cloud strategy. OpenShift provides
+standardized environment for developers regardless of underlying infrastructure (AWS, Microsoft Azure, Google Cloud, etc). As such, businesses can truly enjoy application mobility and portability across 
+different infrastructure.</p>
 
 <h2 id="conclusion">Conclusion</h2>
-<p>It is always the best practice to externalize rules from applications to allow a more agile and efficient development. 
-There are many use cases which RHDM can be part of the solution from fraud detection in banking industry to automated trading in capital markets and etc.</p>
-
-<p>While driving applications with external business rules is beneficial, 
-it is also important to note that it is an additional layer to an application architecture, hence the application and its requirements should be carefully designed to ensure it can leverage on the external engine with
-minimal to zero application code change when a rule changes.</p>
-
+<p>DevOps adoption is crucial to the success of a digital transformation journey. 
+It enables developers and operations to work closely as one unit throughout all the phases of an application development.
+DevOps is more than just a project, it is a cultural change which requires companies to break away from conventional mindset.
+To better understand DevOps, I strongly recommend a novel, The Phoenix Project, it talks about transformation journey and illustrates common problems which are similar to real life.</p>
 
         
       </section>
@@ -451,15 +468,7 @@ minimal to zero application code change when a rule changes.</p>
     
       
       
-      <a href="/tags/#decision-manager" class="page__taxonomy-item" rel="tag">decision manager</a><span class="sep">, </span>
-    
-      
-      
-      <a href="/tags/#drools" class="page__taxonomy-item" rel="tag">drools</a><span class="sep">, </span>
-    
-      
-      
-      <a href="/tags/#jboss" class="page__taxonomy-item" rel="tag">jboss</a><span class="sep">, </span>
+      <a href="/tags/#devops" class="page__taxonomy-item" rel="tag">devops</a><span class="sep">, </span>
     
       
       
@@ -472,7 +481,7 @@ minimal to zero application code change when a rule changes.</p>
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-10-14T00:00:00+08:00">October 14, 2020</time></p>
 
 
       </footer>
@@ -482,25 +491,24 @@ minimal to zero application code change when a rule changes.</p>
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Externalize+Your+Business+Rules+With+Red+Hat+Decision+Manager%20http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Introduction+to+Dev+%2B+Ops%20http%3A%2F%2Flocalhost%3A4000%2F2020%2F10%2F14%2Fintro-to-devops" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2020%2F10%2F14%2Fintro-to-devops" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules&title=Externalize Your Business Rules With Red Hat Decision Manager" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F10%2F14%2Fintro-to-devops&title=Introduction to Dev + Ops" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F10%2F14%2Fintro-to-devops" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/2020/05/11/quarkus-openshift-serverless" class="pagination--pager" title="Quarkus, a lightweight Java for Serverless
+      <a href="/2020/08/12/externalize-your-business-rules" class="pagination--pager" title="Externalize Your Business Rules With Red Hat Decision Manager
 ">Previous</a>
     
     
-      <a href="/2020/10/14/intro-to-devops" class="pagination--pager" title="Introduction to Dev + Ops
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -524,7 +532,7 @@ minimal to zero application code change when a rule changes.</p>
     
     <h2 class="archive__item-title no_toc" itemprop="headline">
       
-        <a href="/2020/10/14/intro-to-devops" rel="permalink">Introduction to Dev + Ops
+        <a href="/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules With Red Hat Decision Manager
 </a>
       
     </h2>
@@ -536,7 +544,7 @@ minimal to zero application code change when a rule changes.</p>
     
       
       <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
-      <time datetime="2020-10-14T00:00:00+08:00">October 14, 2020</time>
+      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
     
 
     
@@ -551,14 +559,13 @@ minimal to zero application code change when a rule changes.</p>
 
       <i class="far fa-fw fa-clock" aria-hidden="true"></i>
       
-        5 minute read
+        4 minute read
       
     
 
   </p>
 
-    <p class="archive__item-excerpt" itemprop="description">The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
-t...</p>
+    <p class="archive__item-excerpt" itemprop="description">In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate...</p>
   </article>
 </div>
 
