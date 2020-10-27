@@ -41,8 +41,8 @@ comments:
     num_posts            : # 5 (default)
     colorscheme          : # "light" (default), "dark"
   utterances:
-    theme                : "github-light" # "github-light" (default), "github-dark"
-    issue_term           : "pathname" # "pathname" (default)
+    theme                : # "github-light" # "github-light" (default), "github-dark"
+    issue_term           : # "pathname" # "pathname" (default)
   staticman:
     branch               : # "master"
     endpoint             : # "https://{your Staticman v3 API}/v3/entry/github/"
@@ -292,4 +292,7 @@ defaults:
       comments: true
       share: true
       related: true
-
+      toc: true
+      toc_label: "Table of Contents"
+      toc_icon: "file-alt"
+      toc_sticky: true
