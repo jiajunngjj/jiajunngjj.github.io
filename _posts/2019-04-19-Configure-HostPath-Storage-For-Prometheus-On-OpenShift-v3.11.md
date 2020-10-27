@@ -1,5 +1,8 @@
 ---
 title: "Configure HostPath Storage For Prometheus on OpenShift v3.11"
+toc: true
+toc_label: "Table of Contents"
+toc_icon: "file-alt"
 tags: 
   - redhat
   - openshift
@@ -267,5 +270,5 @@ The end result for the PV and PVC in OpenShift-Monitoring:
   prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1         100G       RWO                           10m
   ```
     
-### References
+## References
 * [https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage](https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage)

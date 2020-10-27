@@ -130,9 +130,9 @@
           
         </a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="https://jiajunngjj.github.io/">Home</a>
+              <a href="https://jjblog.io/">Home</a>
             </li><li class="masthead__menu-item">
-              <a href="https://jiajunngjj.github.io/archives/">Archives</a>
+              <a href="https://jjblog.io/archives/">Archives</a>
             </li></ul>
         
         <button class="search__toggle" type="button">
@@ -331,6 +331,26 @@
       
 
       <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> Table of Contents</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#configuration-steps">Configuration Steps</a>
+    <ul>
+      <li><a href="#assumptions">Assumptions</a></li>
+      <li><a href="#inventory-file">Inventory file</a></li>
+      <li><a href="#run-the-playbook">Run the playbook</a></li>
+      <li><a href="#node-hostpath-configuration">Node hostpath configuration</a></li>
+      <li><a href="#post-installation---prometheus">Post Installation - Prometheus</a></li>
+      <li><a href="#post-installation--alertmanager">Post Installation - Alertmanager</a></li>
+    </ul>
+  </li>
+  <li><a href="#references">References</a></li>
+</ul>
+
+            </nav>
+          </aside>
         
         <p>This post covers the configuration of persistent storage with HostPath for OpenShift Monitoring stack.</p>
 
@@ -619,7 +639,7 @@ status:
   prometheus-k8s-db-prometheus-k8s-1         Bound     prometheus-k8s-db-prometheus-k8s-1         100G       RWO                           10m
 </code></pre></div></div>
 
-<h3 id="references">References</h3>
+<h2 id="references">References</h2>
 <ul>
   <li><a href="https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage">https://docs.openshift.com/container-platform/3.11/install_config/prometheus_cluster_monitoring.html#persistent-storage</a></li>
 </ul>

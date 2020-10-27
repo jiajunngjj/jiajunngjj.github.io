@@ -25,7 +25,7 @@ var store = [{
       },{
         "title": "Introduction to Dev + Ops",
         "excerpt":"The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup. What is DevOps...","categories": [],
-        "tags": ["redhat","devops","appdev"],
+        "tags": ["redhat","devops","appdev","openshift"],
         "url": "http://localhost:4000/2020/10/14/intro-to-devops",
         "teaser": null
       }]
