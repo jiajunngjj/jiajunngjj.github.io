@@ -1,8 +1,6 @@
 ---
 title: "Quarkus, a lightweight Java for Serverless"
-toc: true
-toc_label: "Table of Contents"
-toc_icon: "file-alt"
+
 tags:
   - redhat
   - openshift

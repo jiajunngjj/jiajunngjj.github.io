@@ -1,8 +1,6 @@
 ---
 title: "Externalize Your Business Rules With Red Hat Decision Manager"
-toc: true
-toc_label: "Table of Contents"
-toc_icon: "file-alt"
+
 tags: 
   - redhat
   - decision manager

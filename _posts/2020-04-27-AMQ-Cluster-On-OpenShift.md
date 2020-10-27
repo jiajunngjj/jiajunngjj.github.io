@@ -1,8 +1,6 @@
 ---
 title: "AMQ Messaging on OpenShift"
-toc: true
-toc_label: "Table of Contents"
-toc_icon: "file-alt"
+
 tags: 
   - redhat
   - openshift
