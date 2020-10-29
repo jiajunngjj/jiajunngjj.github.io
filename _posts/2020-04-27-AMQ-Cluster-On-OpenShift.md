@@ -1,6 +1,5 @@
 ---
 title: "AMQ Messaging on OpenShift"
-
 tags: 
   - redhat
   - openshift
