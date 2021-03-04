@@ -6,10 +6,10 @@ tags:
 permalink: /:year/:month/:day/intro-to-devsecops
 ---
 ## What is DevSecOps
+DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have already guessed it, "DevSecOps" expands "DevOps" and has an additional focus, **security**; eliminating silos between development, operations and security.
+
 ![DevSecOps](https://user-images.githubusercontent.com/25560159/109853707-2b179500-7c91-11eb-9d0e-6bdaf16967b5.png)
 <sub><sup>[Image Source](https://sevaa.com/app/uploads/2018/10/ft-devsecops.png)
-
-DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have already guessed it, "DevSecOps" expands "DevOps" and has an additional focus, **security**; eliminating silos between development, operations and security. 
 
 **Definition of DevSecOps**
 > "DevSecOps is the integration of security into emerging agile IT and DevOps development as seamlessly and as transparently as possible. Ideally, this is done without reducing the agility or speed of developers or requiring them to leave their development toolchain environment." - Gartner
