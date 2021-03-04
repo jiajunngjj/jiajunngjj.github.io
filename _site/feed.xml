@@ -1,4 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-03-03T23:13:14+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Introduction to Dev + Ops</title><link href="http://localhost:4000/2020/10/14/intro-to-devops" rel="alternate" type="text/html" title="Introduction to Dev + Ops" /><published>2020-10-14T00:00:00+08:00</published><updated>2020-10-14T00:00:00+08:00</updated><id>http://localhost:4000/2020/10/14/Dev+Ops</id><content type="html" xml:base="http://localhost:4000/2020/10/14/intro-to-devops">&lt;p&gt;The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-03-04T10:54:04+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Introduction to Dev + Sec + Ops</title><link href="http://localhost:4000/2021/03/04/intro-to-devsecops" rel="alternate" type="text/html" title="Introduction to Dev + Sec + Ops" /><published>2021-03-04T00:00:00+08:00</published><updated>2021-03-04T00:00:00+08:00</updated><id>http://localhost:4000/2021/03/04/What-Is-DevSecOps</id><content type="html" xml:base="http://localhost:4000/2021/03/04/intro-to-devsecops">&lt;h2 id=&quot;what-is-devsecops&quot;&gt;What is DevSecOps&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/109853707-2b179500-7c91-11eb-9d0e-6bdaf16967b5.png&quot; alt=&quot;DevSecOps&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://sevaa.com/app/uploads/2018/10/ft-devsecops.png&quot;&gt;Image Source&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have already guessed it, “DevSecOps” expands “DevOps” and has an additional focus, &lt;strong&gt;security&lt;/strong&gt;; eliminating silos between development, operations and security.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Definition of DevSecOps&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“DevSecOps is the integration of security into emerging agile IT and DevOps development as seamlessly and as transparently as possible. Ideally, this is done without reducing the agility or speed of developers or requiring them to leave their development toolchain environment.” - Gartner&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Security has been in the spotlight for the past couple of years where software vulnerabilities are being exploited at both the application and infrastructure layers; on-premise and on cloud. One of such attacks was the SolarWinds hack in 2020. Over the years,
+organisations have constantly transforming and changing the way they deploy applications and where they deploy them. With things moving so fast, organisations are looking for ways to tackle security challenges. 
+Fundamentally with DevSecOps, security is baked into the end-to-end software development lifecycle (SDLC), and vulnerabilities can be caught and fixed before anyone can exploit them.&lt;/p&gt;
+
+&lt;p&gt;In this article, I will be sharing some of the practices around DevSecOps and some tools that can be integrated into the pipeline. This is an expansion to my
+previous article, &lt;a href=&quot;https://jjblog.io/2020/10/14/intro-to-devops&quot;&gt;Introduction to DevOps&lt;/a&gt; which covers the basics of DevOps.&lt;/p&gt;
+
+&lt;h2 id=&quot;benefits-of-devsecops&quot;&gt;Benefits of DevSecOps&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/109900151-db0cf280-7cd1-11eb-86ca-423e3ef79796.png&quot; alt=&quot;Detect Vulnerabilities&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://www.tenable.com/sites/drupal.dmz.tenablesecurity.com/files/styles/640x360/public/images/articles/shadow_brokers_vulnerability_detection_v1.png?itok=akRCxXFk&quot;&gt;Image Source&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;Adoption of DevSecOps has the following main benefits:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Early detection of vulnerabilities&lt;/strong&gt; - spot bugs at an earlier stage with an automated workflow embed with security tools.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Improve application overall security&lt;/strong&gt; - with security built into the application, it will have lesser bugs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Save costs on resource management&lt;/strong&gt; - risk and vulnerability assessment can be done from the start and through development instead of waiting until after a release.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;how-to-implement--transiting-to-devsecops&quot;&gt;How to implement / transiting to DevSecOps&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/109900515-769e6300-7cd2-11eb-85bc-5fbfaff73a66.png&quot; alt=&quot;DevSecOps&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://www.plutora.com/wp-content/uploads/2019/03/DevSecOps-Diagram.png&quot;&gt;Image Source&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
+&lt;p&gt;To integrate security into DevOps successfully, the concept of &lt;strong&gt;building security into the product&lt;/strong&gt; must be applied. It is never about having security integrated to a finished product.&lt;/p&gt;
+
+&lt;p&gt;DevSecOps adopts a few practices in its life cycle (simplified with examples):&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Culture&lt;/strong&gt; - security has to be prioritised at the beginning (top-down approach), usually starting from the planning and designing stage. Every team needs to understand their security responsibilities and how to manage risks/threats.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Coding&lt;/strong&gt; - prioritizing the security requirements as a part of the product backlog, instill security knowledge into developers, they need to take ownership and practise secure coding, writing clean codes which adhered to secured coding standards.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Automation&lt;/strong&gt; - automate development and operations side of things which include applying/provisioning of repeatable security best practices through the orchestration of containers (Kubernetes),
+integrate security standards and guidelines into IDEs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Testing&lt;/strong&gt; - automated security, penetration, functional and performance tests. Define your own static application security testing (SAST), dynamic application security testing (DAST), runtime application self-protection (RASP); find the right tools for these tests.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Deployment&lt;/strong&gt; - scanning of container images for vulnerabilities and automated deployment through secured CI/CD and APIs.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Measurement and Monitoring&lt;/strong&gt; - Real-time and continuous monitoring on production workloads with alerts and notifications; and intrusion detection. Gather feedback to improve the next release of the application.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Adoption of DevSecOps will have some challenges because it is more of a culture to technology. DevSecOps should start with a culture shift and getting buy-in from top management should help to drive the culture within the organisation.
+To effectively drive adoption, here are some suggestions:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Evaluate current security measures and conclude on how to improve them&lt;/li&gt;
+  &lt;li&gt;Mandate security at every stage of the pipeline&lt;/li&gt;
+  &lt;li&gt;Processes should be automated as much as possible&lt;/li&gt;
+  &lt;li&gt;Developers to be trained to code securely&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;tools-that-can-be-integrated-into-the-pipeline&quot;&gt;Tools that can be integrated into the pipeline&lt;/h2&gt;
+&lt;p&gt;There are many tools available, both commercial or open source, that can be integrated into existing CI/CD pipeline and below are some of my suggestions:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SonarQube&lt;/strong&gt; - continuous inspection of code quality to perform automatic reviews with static analysis of code.&lt;br /&gt;
+&lt;strong&gt;Harbor&lt;/strong&gt; - open source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.&lt;br /&gt;
+&lt;strong&gt;HashiCorp Vault&lt;/strong&gt; - secures, stores, and tightly controls access to tokens, passwords, certificates, API keys, and other secrets in modern computing.&lt;br /&gt;
+&lt;strong&gt;ThreatModeler&lt;/strong&gt; - identify, predict and define threats across the entire attack surface to make proactive security decisions and minimize overall risk. &lt;br /&gt;
+&lt;strong&gt;Aqua Security&lt;/strong&gt; - provides security for containers, serverless and cloud-native applications throughout the DevSecOps pipeline.&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;DevSecOps builds trust and security into an application. As organisations are undergoing digital transformation, moving into the cloud native world with containers and microservices, it introduces new 
+things to worry about and security remains prominent. There will never be a fully secured application but fostering the DevSecOps mindset and culture will be the key to tackle security challenges in the unfamiliar environment.
+Like many security programmes, the successful implementation is heavily dependent on people, processes and technologies; everyone has a role to play.&lt;/p&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="devsecops" /><category term="appdev" /><summary type="html">What is DevSecOps Image Source</summary></entry><entry><title type="html">Introduction to Dev + Ops</title><link href="http://localhost:4000/2020/10/14/intro-to-devops" rel="alternate" type="text/html" title="Introduction to Dev + Ops" /><published>2020-10-14T00:00:00+08:00</published><updated>2020-10-14T00:00:00+08:00</updated><id>http://localhost:4000/2020/10/14/Dev+Ops</id><content type="html" xml:base="http://localhost:4000/2020/10/14/intro-to-devops">&lt;p&gt;The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
 the fundamental concepts of DevOps together with some common tools that companies are using and a simple setup.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/95935658-54c94000-0e06-11eb-8774-03e10cea6aa2.png&quot; alt=&quot;DevOps&quot; /&gt;&lt;/p&gt;

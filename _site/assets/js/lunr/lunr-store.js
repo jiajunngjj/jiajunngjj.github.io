@@ -28,4 +28,10 @@ var store = [{
         "tags": ["redhat","devops","appdev","openshift"],
         "url": "http://localhost:4000/2020/10/14/intro-to-devops",
         "teaser": null
+      },{
+        "title": "Introduction to Dev + Sec + Ops",
+        "excerpt":"What is DevSecOps Image Source DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have already guessed it, “DevSecOps” expands “DevOps” and has an additional focus, security; eliminating silos between development, operations and security. Definition of DevSecOps “DevSecOps is the...","categories": [],
+        "tags": ["devsecops","appdev"],
+        "url": "http://localhost:4000/2021/03/04/intro-to-devsecops",
+        "teaser": null
       }]
