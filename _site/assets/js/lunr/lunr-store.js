@@ -34,4 +34,10 @@ var store = [{
         "tags": ["devsecops","appdev"],
         "url": "http://localhost:4000/2021/03/04/intro-to-devsecops",
         "teaser": null
+      },{
+        "title": "Adding Salt To Your Environment",
+        "excerpt":"Automation, orchestration and configuration management tools are important foundation of an IT day-to-day operation. Especially in today’s world, where organizations are moving towards agile practices to deliver applications faster. These responsibilities are often given to the development teams, empowering them to provision, configure, and manage their own infrastructure. There are...","categories": [],
+        "tags": ["devsops","automation"],
+        "url": "http://localhost:4000/2021/04/15/add-salt-to-your-environment",
+        "teaser": null
       }]

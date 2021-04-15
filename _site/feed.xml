@@ -1,4 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-03-08T20:59:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Introduction to Dev + Sec + Ops</title><link href="http://localhost:4000/2021/03/04/intro-to-devsecops" rel="alternate" type="text/html" title="Introduction to Dev + Sec + Ops" /><published>2021-03-04T00:00:00+08:00</published><updated>2021-03-04T00:00:00+08:00</updated><id>http://localhost:4000/2021/03/04/What-Is-DevSecOps</id><content type="html" xml:base="http://localhost:4000/2021/03/04/intro-to-devsecops">&lt;h2 id=&quot;what-is-devsecops&quot;&gt;What is DevSecOps&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-04-16T01:35:51+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Adding Salt To Your Environment</title><link href="http://localhost:4000/2021/04/15/add-salt-to-your-environment" rel="alternate" type="text/html" title="Adding Salt To Your Environment" /><published>2021-04-15T00:00:00+08:00</published><updated>2021-04-15T00:00:00+08:00</updated><id>http://localhost:4000/2021/04/15/Adding-Salt-To-Your-Environment</id><content type="html" xml:base="http://localhost:4000/2021/04/15/add-salt-to-your-environment">&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/114913607-f7b15400-9e53-11eb-91a9-7a3694de1b1f.png&quot; alt=&quot;Salt Shaker&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Automation, orchestration and configuration management tools are important foundation of an IT day-to-day operation. Especially in today’s world, where organizations are moving towards agile practices to deliver
+applications faster. These responsibilities are often given to the development teams, empowering them to provision, configure, and manage their own infrastructure.&lt;/p&gt;
+
+&lt;p&gt;There are many tools out there which does the job
+and in this post, I will be sharing about SaltStack, an open source tool which is acquired by VMware in 2020.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-saltstack&quot;&gt;What is SaltStack&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/114822677-01f03580-9df5-11eb-8224-b8de8d5dc8b1.png&quot; alt=&quot;SaltStack&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;“&lt;strong&gt;SaltStack, also known as Salt&lt;/strong&gt; is a Python-based, open-source software for event-driven IT automation, remote task execution, and configuration management. “ - Wikipedia&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Salt automates the configuration of your infrastructure from on-premise to cloud. Repetitive manual system administrative tasks or processes can be automated with Salt to reduce unnecessary errors when it comes to configuring 
+systems. It simplifies management of systems as you can execute commands remotely to multiple machines directly in parallel. Not to mention that Salt supports different operating systems, including various distributions of GNU/Linux, Microsoft Windows, and macOS.&lt;/p&gt;
+
+&lt;p&gt;Salt also leverages on YAML programming language, and most of the time, users will be writing in YAML for their configurations unless users would like to write their own modules in Python.&lt;/p&gt;
+
+&lt;h2 id=&quot;saltstack-architecture&quot;&gt;SaltStack Architecture&lt;/h2&gt;
+&lt;p&gt;Salt uses a publisher-subscriber model and follows a concept of “&lt;strong&gt;Master&lt;/strong&gt;” and “&lt;strong&gt;Minion&lt;/strong&gt;”, where Master is the controlling node and Minion is the node that is being controlled. Master and Minion daemon service will be installed upon setting up Salt.&lt;/p&gt;
+
+&lt;p&gt;Communication between Master and Minion is through an event bus backed by &lt;a href=&quot;https://zeromq.org/&quot;&gt;ZeroMQ&lt;/a&gt; which does not require any message broker and creates an asynchronous network topology to provide the fastest communication possible.&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;1016&quot; alt=&quot;Salt architecture&quot; src=&quot;https://user-images.githubusercontent.com/25560159/114836757-8ea2ef80-9e05-11eb-90f6-759791f90a31.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Adding on to the above architecture, multi master nodes can be configured to provide high availability.&lt;/p&gt;
+
+&lt;p&gt;For users who do not like the idea of having an agent, agentless Salt is available as well. In such setup, minion daemon does not need to be installed in the remote host. Instead, the only requirements on the remote host are SSH and Python.
+Agentless Salt can be set up in conjunction with a master-minion environment as well.&lt;/p&gt;
+
+&lt;p&gt;&lt;img width=&quot;756&quot; alt=&quot;Salt agentless&quot; src=&quot;https://user-images.githubusercontent.com/25560159/114838796-a7140980-9e07-11eb-91ed-f94d68ad2db2.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The recommended setup is to operate in a Master and Minion approach as execution via SSH is substantially slower, users would have already experienced this when managing large number of nodes.&lt;/p&gt;
+
+&lt;h2 id=&quot;saltstack-use-case&quot;&gt;SaltStack Use Case&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;DevOps&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Apart from the typical use case of automating day-to-day tasks and managing multiple systems, Salt can play a part in the DevOps space as well. It can automate everything a developer requires, 
+from managing source code and configuration, scheduling jobs, to cloud provisioning. Salt is vendor agnostic and highly pluggable, it is able to interface with other CI tools and version-control systems.&lt;/p&gt;
+
+&lt;p&gt;An example is to integrate Jenkins with Salt where Salt can be used to deploy and configure environment such as deploying a docker container, and Jenkins will execute the tests upon the new Salt change automatically. 
+In such example, Salt also provides security to DevOps as it allows organisations to provide public and private keys for all masters and minions, guaranteeing their authenticity and providing a secure channel for master/minion communications without sacrificing performance or scalability.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Event Driven Automation&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Salt is built around event driven infrastructure, you can monitor events with Salt Runner, and non-Salt related events (system load, service status, etc) with Salt Beacon, and Salt Reactor to trigger actions in response to any event.
+An example is to watch for computing resources such as disk, processor, ram, and other system stats and take action if it exceeds defined thresholds.&lt;/p&gt;
+
+&lt;h2 id=&quot;vmwares-acquisition---saltstack-config-and-saltstack-secops&quot;&gt;VMware’s Acquisition - SaltStack Config and SaltStack SecOps&lt;/h2&gt;
+&lt;p&gt;With VMware’s announcement of the acquisition, Salt is integrated into the vRealize Automation (vRA) solution as features known as SaltStack Config and SaltStack SecOps. Salt further expands
+vRA capabilities into an enterprise-grade management tool which includes policy and governance, Infrastructure as Code and DevSecOps.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/114902820-c5e6c000-9e48-11eb-92fb-da7cde44abb6.png&quot; alt=&quot;vRealize Automation Features&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The capabilities are summed up as below:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;SaltStack Config&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Simple and modern languages python and YAML to manage applications and infrastructure&lt;/li&gt;
+  &lt;li&gt;Self-healing with event driven automation to detect events such as errors and apply solution automatically&lt;/li&gt;
+  &lt;li&gt;Agent or agentless management of systems&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;SaltStack SecOps&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Enforce continuous compliance with pre-built CIS and DISA STIGs content&lt;/li&gt;
+  &lt;li&gt;Scan and remediate critical vulnerabilities with automation&lt;/li&gt;
+  &lt;li&gt;Real-time insights of the state of systems and applications&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;SaltStack is pretty well known when it comes to automation and its unique capabilities. With SaltStack integrated into vRA, there is no doubt that vRA can provide
+a more complete solution when it comes to event driven automation and compliance management within the organization’s operations.&lt;/p&gt;
+
+&lt;p&gt;You can read more about the vRA with SaltStack:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blogs.vmware.com/management/2020/11/vmware-vrealize-automation-saltstack-config-launch.html&quot;&gt;VMware vRealize Automation Adds Native Configuration Management with vRealize Automation SaltStack Config&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blogs.vmware.com/management/2021/04/vra-saltstack-config-secops-compliance-management.html&quot;&gt;VMware vRealize Automation SaltStack SecOps : Technical Overview Part 1 – Compliance Management&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And some good SaltStack references:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://saltproject.io/infrastructure-automation-2020-a-quick-guide/&quot;&gt;A Guide to Infrastructure Automation in 2020&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/saltstack/salt&quot;&gt;SaltStack GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="devsops" /><category term="automation" /><summary type="html"></summary></entry><entry><title type="html">Introduction to Dev + Sec + Ops</title><link href="http://localhost:4000/2021/03/04/intro-to-devsecops" rel="alternate" type="text/html" title="Introduction to Dev + Sec + Ops" /><published>2021-03-04T00:00:00+08:00</published><updated>2021-03-04T00:00:00+08:00</updated><id>http://localhost:4000/2021/03/04/What-Is-DevSecOps</id><content type="html" xml:base="http://localhost:4000/2021/03/04/intro-to-devsecops">&lt;h2 id=&quot;what-is-devsecops&quot;&gt;What is DevSecOps&lt;/h2&gt;
 &lt;p&gt;DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have already guessed it, “DevSecOps” expands “DevOps” and has an additional focus, &lt;strong&gt;security&lt;/strong&gt;; eliminating silos between development, operations and security.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/109853707-2b179500-7c91-11eb-9d0e-6bdaf16967b5.png&quot; alt=&quot;DevSecOps&quot; /&gt;
