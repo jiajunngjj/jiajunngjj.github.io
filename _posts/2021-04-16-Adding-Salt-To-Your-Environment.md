@@ -87,7 +87,7 @@ The capabilities are summed up as below:
 
 ## Conclusion
 SaltStack is pretty well known when it comes to automation and its unique capabilities. With SaltStack integrated into vRA, there is no doubt that vRA can provide
-a more complete solution when it comes to event-driven automation and compliance management within the organisation's operations.
+a more complete solution when it comes to event-driven automation and compliance management within the organisation's operations, and expanding into the DevSecOps use case.
 
 You can read more about the vRA with SaltStack:
 * [VMware vRealize Automation Adds Native Configuration Management with vRealize Automation SaltStack Config](https://blogs.vmware.com/management/2020/11/vmware-vrealize-automation-saltstack-config-launch.html)
