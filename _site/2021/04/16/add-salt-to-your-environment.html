@@ -10,7 +10,7 @@
     <meta charset="utf-8">
 
 <!-- begin _includes/seo.html --><title>Adding Salt To Your Environment - JJ’s Blog</title>
-<meta name="description" content="">
+<meta name="description" content="Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…">
 
 
   <meta name="author" content="Jia Jun Ng (JJ)">
@@ -20,29 +20,29 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="JJ's Blog">
 <meta property="og:title" content="Adding Salt To Your Environment">
-<meta property="og:url" content="http://localhost:4000/2021/04/15/add-salt-to-your-environment">
+<meta property="og:url" content="http://localhost:4000/2021/04/16/add-salt-to-your-environment">
 
 
-  <meta property="og:description" content="">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2021-04-15T00:00:00+08:00">
+  <meta property="og:description" content="Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2021-04-16T00:00:00+08:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/2021/04/15/add-salt-to-your-environment">
+
+<link rel="canonical" href="http://localhost:4000/2021/04/16/add-salt-to-your-environment">
 
 
 
@@ -291,8 +291,8 @@
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
     <meta itemprop="headline" content="Adding Salt To Your Environment">
-    <meta itemprop="description" content="">
-    <meta itemprop="datePublished" content="2021-04-15T00:00:00+08:00">
+    <meta itemprop="description" content="Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…">
+    <meta itemprop="datePublished" content="2021-04-16T00:00:00+08:00">
     
 
     <div class="page__inner-wrap">
@@ -308,7 +308,7 @@
     
       
       <i class="far fa-calendar-alt" aria-hidden="true"></i>
-      <time datetime="2021-04-15T00:00:00+08:00">April 15, 2021</time>
+      <time datetime="2021-04-16T00:00:00+08:00">April 16, 2021</time>
     
 
     
@@ -348,13 +348,15 @@
             </nav>
           </aside>
         
-        <p><img src="https://user-images.githubusercontent.com/25560159/114913607-f7b15400-9e53-11eb-91a9-7a3694de1b1f.png" alt="Salt Shaker" /></p>
+        <p>Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…</p>
 
-<p>Automation, orchestration and configuration management tools are important foundation of an IT day-to-day operation. Especially in today’s world, where organizations are moving towards agile practices to deliver
-applications faster. These responsibilities are often given to the development teams, empowering them to provision, configure, and manage their own infrastructure.</p>
+<p><img src="https://user-images.githubusercontent.com/25560159/114913607-f7b15400-9e53-11eb-91a9-7a3694de1b1f.png" alt="Salt Shaker" /></p>
 
-<p>There are many tools out there which does the job
-and in this post, I will be sharing about SaltStack, an open source tool which is acquired by VMware in 2020.</p>
+<p>IT automation and configuration management tools serve as an important foundation of an IT day-to-day operation. Especially in today’s world, where organisations are moving towards agile practices to deliver
+applications faster. These responsibilities are often given to the development teams, empowering them to provision, configure, and manage their own environment. Hence, it is important to have the right tool which fulfills
+ the needs of both infra/ops and development teams. Basically it is about giving infra/ops team enough management power to manage what development team can manage.</p>
+
+<p>There are many tools out there which does the job and in this post, I will be sharing about SaltStack, an open source tool which was acquired by VMware in 2020, and went GA recently.</p>
 
 <h2 id="what-is-saltstack">What is SaltStack</h2>
 <p><img src="https://user-images.githubusercontent.com/25560159/114822677-01f03580-9df5-11eb-8224-b8de8d5dc8b1.png" alt="SaltStack" /></p>
@@ -375,31 +377,42 @@ systems. It simplifies management of systems as you can execute commands remotel
 
 <p><img width="1016" alt="Salt architecture" src="https://user-images.githubusercontent.com/25560159/114836757-8ea2ef80-9e05-11eb-90f6-759791f90a31.png" /></p>
 
-<p>Adding on to the above architecture, multi master nodes can be configured to provide high availability.</p>
+<p>Adding on to the above architecture, multi master can be configured to provide high availability.</p>
 
 <p>For users who do not like the idea of having an agent, agentless Salt is available as well. In such setup, minion daemon does not need to be installed in the remote host. Instead, the only requirements on the remote host are SSH and Python.
 Agentless Salt can be set up in conjunction with a master-minion environment as well.</p>
 
 <p><img width="756" alt="Salt agentless" src="https://user-images.githubusercontent.com/25560159/114838796-a7140980-9e07-11eb-91ed-f94d68ad2db2.png" /></p>
 
-<p>The recommended setup is to operate in a Master and Minion approach as execution via SSH is substantially slower, users would have already experienced this when managing large number of nodes.</p>
+<p>The recommended setup is to operate in a Master and Minion approach as execution via SSH is substantially slower, existing users would have already experienced this when managing large number of nodes.</p>
 
 <h2 id="saltstack-use-case">SaltStack Use Case</h2>
+<p>As Salt is extremely modular and flexible, it can work pretty much with any use case relating to DevOps, SecOps, NetOps, or CloudOps.</p>
+
+<p>Let me share some use cases:</p>
+
 <p><strong>DevOps</strong></p>
 
 <p>Apart from the typical use case of automating day-to-day tasks and managing multiple systems, Salt can play a part in the DevOps space as well. It can automate everything a developer requires, 
 from managing source code and configuration, scheduling jobs, to cloud provisioning. Salt is vendor agnostic and highly pluggable, it is able to interface with other CI tools and version-control systems.</p>
 
-<p>An example is to integrate Jenkins with Salt where Salt can be used to deploy and configure environment such as deploying a docker container, and Jenkins will execute the tests upon the new Salt change automatically. 
-In such example, Salt also provides security to DevOps as it allows organisations to provide public and private keys for all masters and minions, guaranteeing their authenticity and providing a secure channel for master/minion communications without sacrificing performance or scalability.</p>
+<p><img width="1017" alt="Jenkins with Salt" src="https://user-images.githubusercontent.com/25560159/114967410-fbba9180-9ea6-11eb-87ec-3a467a77c9eb.png" /></p>
 
-<p><strong>Event Driven Automation</strong></p>
+<p>An example is to integrate Jenkins with Salt. Jenkins is one of the popular CI/CD tools which most of the organisations are using, and Salt can help to make Jenkins pipeline better.</p>
 
-<p>Salt is built around event driven infrastructure, you can monitor events with Salt Runner, and non-Salt related events (system load, service status, etc) with Salt Beacon, and Salt Reactor to trigger actions in response to any event.
-An example is to watch for computing resources such as disk, processor, ram, and other system stats and take action if it exceeds defined thresholds.</p>
+<p><img width="1114" alt="Jenkins Pipeline with Salt" src="https://user-images.githubusercontent.com/25560159/114970156-7508b300-9eac-11eb-9d48-527fbbb5af3b.png" /></p>
+
+<p>For instance, Salt can be used to deploy and configure environment such as spawning an instance on-premise or cloud and deploying application on it, and Jenkins will execute the tests automatically upon the new Salt change. 
+In such scenario, Salt also provides security to DevOps as it allows organisations to provide public and private keys for all masters and minions, guaranteeing their authenticity and providing a secure channel for master/minion communications without sacrificing performance or scalability.</p>
+
+<p><strong>Event-Driven Automation</strong></p>
+
+<p>Salt is built around event-driven infrastructure, you can monitor events with Salt Runner, and non-Salt related events (system load, service status, etc) with Salt Beacon, and Salt Reactor to trigger actions in response to any event.</p>
+
+<p>An example is to watch for computing resources such as disk, processor, ram, and other system stats and take action automatically with pre-defined modules if it exceeds defined thresholds.</p>
 
 <h2 id="vmwares-acquisition---saltstack-config-and-saltstack-secops">VMware’s Acquisition - SaltStack Config and SaltStack SecOps</h2>
-<p>With VMware’s announcement of the acquisition, Salt is integrated into the vRealize Automation (vRA) solution as features known as SaltStack Config and SaltStack SecOps. Salt further expands
+<p>With VMware’s announcement of the acquisition, Salt is integrated into the vRealize Automation (vRA) as features known as SaltStack Config and SaltStack SecOps. Salt further expands
 vRA capabilities into an enterprise-grade management tool which includes policy and governance, Infrastructure as Code and DevSecOps.</p>
 
 <p><img src="https://user-images.githubusercontent.com/25560159/114902820-c5e6c000-9e48-11eb-92fb-da7cde44abb6.png" alt="vRealize Automation Features" /></p>
@@ -409,7 +422,7 @@ vRA capabilities into an enterprise-grade management tool which includes policy 
 <p><strong>SaltStack Config</strong></p>
 <ul>
   <li>Simple and modern languages python and YAML to manage applications and infrastructure</li>
-  <li>Self-healing with event driven automation to detect events such as errors and apply solution automatically</li>
+  <li>Self-healing with event-driven automation to detect events such as errors and apply solution automatically</li>
   <li>Agent or agentless management of systems</li>
 </ul>
 
@@ -422,7 +435,7 @@ vRA capabilities into an enterprise-grade management tool which includes policy 
 
 <h2 id="conclusion">Conclusion</h2>
 <p>SaltStack is pretty well known when it comes to automation and its unique capabilities. With SaltStack integrated into vRA, there is no doubt that vRA can provide
-a more complete solution when it comes to event driven automation and compliance management within the organization’s operations.</p>
+a more complete solution when it comes to event-driven automation and compliance management within the organisation’s operations.</p>
 
 <p>You can read more about the vRA with SaltStack:</p>
 <ul>
@@ -459,6 +472,10 @@ a more complete solution when it comes to event driven automation and compliance
     
       
       
+      <a href="/tags/#devsecops" class="page__taxonomy-item" rel="tag">devsecops</a><span class="sep">, </span>
+    
+      
+      
       <a href="/tags/#devsops" class="page__taxonomy-item" rel="tag">devsops</a>
     
     </span>
@@ -468,7 +485,7 @@ a more complete solution when it comes to event driven automation and compliance
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-04-15T00:00:00+08:00">April 15, 2021</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-04-16T00:00:00+08:00">April 16, 2021</time></p>
 
 
       </footer>
@@ -478,13 +495,13 @@ a more complete solution when it comes to event driven automation and compliance
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Adding+Salt+To+Your+Environment%20http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F15%2Fadd-salt-to-your-environment" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Adding+Salt+To+Your+Environment%20http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F16%2Fadd-salt-to-your-environment" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F15%2Fadd-salt-to-your-environment" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F16%2Fadd-salt-to-your-environment" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F15%2Fadd-salt-to-your-environment&title=Adding Salt To Your Environment" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F16%2Fadd-salt-to-your-environment&title=Adding Salt To Your Environment" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F15%2Fadd-salt-to-your-environment" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F04%2F16%2Fadd-salt-to-your-environment" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
@@ -776,8 +793,8 @@ is of...</p>
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/2021/04/15/add-salt-to-your-environment";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/2021/04/15/Adding-Salt-To-Your-Environment"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/2021/04/16/add-salt-to-your-environment";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2021/04/16/Adding-Salt-To-Your-Environment"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');

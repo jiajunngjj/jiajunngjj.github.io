@@ -36,8 +36,8 @@ var store = [{
         "teaser": null
       },{
         "title": "Adding Salt To Your Environment",
-        "excerpt":"Automation, orchestration and configuration management tools are important foundation of an IT day-to-day operation. Especially in today’s world, where organizations are moving towards agile practices to deliver applications faster. These responsibilities are often given to the development teams, empowering them to provision, configure, and manage their own infrastructure. There are...","categories": [],
-        "tags": ["devsops","automation"],
-        "url": "http://localhost:4000/2021/04/15/add-salt-to-your-environment",
+        "excerpt":"Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt… IT automation and configuration management tools serve as an important foundation of an IT day-to-day operation. Especially in today’s world, where organisations are moving towards agile practices to deliver applications faster. These responsibilities are often...","categories": [],
+        "tags": ["devsops","devsecops","automation"],
+        "url": "http://localhost:4000/2021/04/16/add-salt-to-your-environment",
         "teaser": null
       }]
