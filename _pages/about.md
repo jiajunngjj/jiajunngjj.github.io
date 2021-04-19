@@ -4,7 +4,7 @@ title: "About Me"
 layout: single
 author_profile: true
 ---
-Currently, I'm a solution engineer at VMware.
+I'm a solution engineer at VMware.
 
 I started my tech career as a regional post sales consultant at Red Hat. After which, I moved to a regional presales role.
 
