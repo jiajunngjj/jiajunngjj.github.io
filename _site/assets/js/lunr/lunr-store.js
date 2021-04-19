@@ -37,7 +37,7 @@ var store = [{
       },{
         "title": "Adding Salt To Your Environment",
         "excerpt":"Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt… IT automation and configuration management tools serve as an important foundation of an IT day-to-day operation. Especially in today’s world, where organisations are moving towards agile practices to deliver applications faster. These responsibilities are often...","categories": [],
-        "tags": ["devsops","devsecops","automation"],
+        "tags": ["automation","devsops","devsecops","vmware"],
         "url": "http://localhost:4000/2021/04/16/add-salt-to-your-environment",
         "teaser": null
       }]

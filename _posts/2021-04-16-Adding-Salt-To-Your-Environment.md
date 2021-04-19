@@ -1,9 +1,10 @@
 ---
 title: "Adding Salt To Your Environment"
 tags:
+- automation
 - devsops
 - devsecops
-- automation
+- vmware
 permalink: /:year/:month/:day/add-salt-to-your-environment
 ---
 Have you added "Salt" to your environment? Not the condiment, salt. I meant SaltStack's Salt...
