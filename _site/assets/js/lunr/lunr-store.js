@@ -40,4 +40,10 @@ var store = [{
         "tags": ["automation","devsops","devsecops","vmware"],
         "url": "http://localhost:4000/2021/04/16/add-salt-to-your-environment",
         "teaser": null
+      },{
+        "title": "Why vSphere with Tanzu?",
+        "excerpt":"Are you running your own Kubernetes cluster already? If so, how are you managing it currently? Kubernetes was born in 2014 and since then, it has become the default way of managing and scaling containerized applications. Many organisations have begun their journey towards microservices architecture and scalable solutions for their...","categories": [],
+        "tags": ["kubernetes","containers","vsphere","vmware","tanzu"],
+        "url": "http://localhost:4000/2021/06/10/why-vsphere-with-tanzu",
+        "teaser": null
       }]

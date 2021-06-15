@@ -9,8 +9,8 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Externalize Your Business Rules With Red Hat Decision Manager - JJ’s Blog</title>
-<meta name="description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application  code.">
+<!-- begin _includes/seo.html --><title>Why vSphere with Tanzu? - JJ’s Blog</title>
+<meta name="description" content="Are you running your own Kubernetes cluster already? If so, how are you managing it currently?">
 
 
   <meta name="author" content="Jia Jun Ng (JJ)">
@@ -19,30 +19,30 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="JJ's Blog">
-<meta property="og:title" content="Externalize Your Business Rules With Red Hat Decision Manager">
-<meta property="og:url" content="http://localhost:4000/2020/08/12/externalize-your-business-rules">
+<meta property="og:title" content="Why vSphere with Tanzu?">
+<meta property="og:url" content="http://localhost:4000/2021/06/10/why-vsphere-with-tanzu">
 
 
-  <meta property="og:description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application  code.">
-
-
-
-
-
-
-
-  <meta property="article:published_time" content="2020-08-12T00:00:00+08:00">
+  <meta property="og:description" content="Are you running your own Kubernetes cluster already? If so, how are you managing it currently?">
 
 
 
 
 
-  
+
+
+  <meta property="article:published_time" content="2021-06-10T00:00:00+08:00">
+
+
+
+
 
   
 
+  
 
-<link rel="canonical" href="http://localhost:4000/2020/08/12/externalize-your-business-rules">
+
+<link rel="canonical" href="http://localhost:4000/2021/06/10/why-vsphere-with-tanzu">
 
 
 
@@ -293,15 +293,15 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="Externalize Your Business Rules With Red Hat Decision Manager">
-    <meta itemprop="description" content="In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application code.">
-    <meta itemprop="datePublished" content="2020-08-12T00:00:00+08:00">
+    <meta itemprop="headline" content="Why vSphere with Tanzu?">
+    <meta itemprop="description" content="Are you running your own Kubernetes cluster already? If so, how are you managing it currently?">
+    <meta itemprop="datePublished" content="2021-06-10T00:00:00+08:00">
     
 
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">Externalize Your Business Rules With Red Hat Decision Manager
+          <h1 id="page-title" class="page__title" itemprop="headline">Why vSphere with Tanzu?
 </h1>
           
 
@@ -311,7 +311,7 @@
     
       
       <i class="far fa-calendar-alt" aria-hidden="true"></i>
-      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+      <time datetime="2021-06-10T00:00:00+08:00">June 10, 2021</time>
     
 
     
@@ -341,8 +341,14 @@
             <nav class="toc">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> Table of Contents</h4></header>
               <ul class="toc__menu">
-  <li><a href="#concepts">Concepts</a></li>
-  <li><a href="#set-up">Set up</a></li>
+  <li><a href="#what-is-vsphere-with-tanzu">What is vSphere with Tanzu</a>
+    <ul>
+      <li><a href="#vsphere-pod">vSphere Pod</a></li>
+      <li><a href="#tanzu-kubernetes-grid-service">Tanzu Kubernetes Grid Service</a></li>
+    </ul>
+  </li>
+  <li><a href="#architecture">Architecture</a></li>
+  <li><a href="#use-case">Use case</a></li>
   <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 
@@ -364,100 +370,87 @@
             </div>
           </aside>
         
-        <p>In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate decision logic from application 
-code.</p>
+        <p>Are you running your own Kubernetes cluster already? If so, how are you managing it currently?</p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90093092-4d7dab80-dd5d-11ea-842d-2839045814cb.png" alt="Red Hat Decision Manager" /></p>
+<p><img src="https://user-images.githubusercontent.com/25560159/121776669-c25d8400-cbc0-11eb-9e03-1740919b10f3.png" alt="kubernetes cluster" /></p>
 
-<p>Recently, I was involved in creating a fraudulent detection demo/workshop which requires decision making based on a certain set of rules. 
-The part which involves business rules is when a prediction model computes a score from the raw data received, and the application needs to make a 
-decision based on the score. This is the part where a rules engine manages decision processes using pre-defined logic to determine outcomes.</p>
+<p>Kubernetes was born in 2014 and since then, it has become the default way of managing and scaling containerized applications. Many organisations have begun their journey
+towards microservices architecture and scalable solutions for their applications, going the cloud native way. Kubernetes plays a part in the cloud native journey alongside with many other open source tools, not to mention the
+native cloud providers which provide the underlying infrastructure.</p>
 
-<p>Before going into my setup, let’s understand why there is a need for a business rules engine. Usually, business rules are hidden inside an application code and this is a problem for non-technical
-folks. Non-technical folks like the business people know the rules and regulations policy but do not understand application code. It will be difficult to manage the rules especially when 
-business applications can contain tens of thousands of rules which are continually changing. Therefore, there will be impact when it comes to adding, removing or changing rules.
-As such, an external business rules engine helps to decouple application code from business rules and allows a centralized management of rules.</p>
+<p>During this journey, many infrastructure and operation folks face steep learning curves in managing and operating Kubernetes while the developers are happily exploring
+the new way of application development, maybe. Kubernetes is a complicated and interesting platform on their own and every add-on can be an open source project. Essential functionalities like monitoring and 
+logging in Kubernetes are also achieved through open source projects. Of course if you have enterprise software which provides logging feature, you can integrate with Kubernetes as well.</p>
 
-<h2 id="concepts">Concepts</h2>
-<p>RHDM is based on the <a href="https://www.drools.org/">Drools</a> project, one of the widest used rules engines in the industry which many in-house applications are already using.</p>
+<p><img src="https://user-images.githubusercontent.com/25560159/122045558-7c96fa80-ce10-11eb-9e9f-ed84f217721a.png" alt="CNCF Landscape" />
+<sub><sup><a href="https://landscape.cncf.io/">Image Source</a></sup></sub></p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90094510-b74b8480-dd60-11ea-91cf-5f5ed519f2e3.png" alt="Drools Engine" /></p>
+<p>Above is a picture of the cloud native landscape from Cloud Native Computing Foundation (CNCF). This landscape of open source projects 
+provides end-user communities with viable options for building cloud native applications. This should give you an idea of the complexity
+one has to go through to go the cloud native way.</p>
 
-<p>The decision engine operates using the following basic components:</p>
-<ul>
-  <li><strong>Rules</strong>: Business rules or DMN decisions that you define. All rules must contain at a minimum the conditions that trigger the rule and the actions that the rule dictates.</li>
-  <li><strong>Facts</strong>: Data that enters or changes in the decision engine that the decision engine matches to rule conditions to execute applicable rules.</li>
-  <li><strong>Production memory</strong>: Location where rules are stored in the decision engine.</li>
-  <li><strong>Working memory</strong>: Location where facts are stored in the decision engine.</li>
-  <li><strong>Agenda</strong>: Location where activated rules are registered and sorted (if applicable) in preparation for execution.</li>
-</ul>
+<p>Embarking on a journey with Kubernetes is just a start of cloud native development, and many software vendors have already released 
+its own distribution of Kubernetes, packaging with its own selected list of open source projects, providing supportability.</p>
 
-<p><strong>What is a rules engine</strong></p>
+<p>There are many vendors to choose from, and today, I would like to share a unique feature from the VMware Tanzu portfolio, vSphere with Tanzu, which addresses the steep learning curve of Kubernetes from an
+infrastructure perspective.</p>
+
+<h2 id="what-is-vsphere-with-tanzu">What is vSphere with Tanzu</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/121643488-74635600-cac4-11eb-9d0b-3d502ce9a67a.png" alt="vsphere and kubernetes" /></p>
+
 <blockquote>
-  <p>“A business rules engine is a software system that executes one or more business rules in a runtime production environment” - Wikipedia</p>
+  <p>“<strong>vSphere with Tanzu</strong> is the new generation of vSphere for containerized applications. This single, streamlined solution bridges the gap between IT operations and developers with a new kind of infrastructure for modern, cloud-native applications both on premises and in public clouds.” - VMware</p>
 </blockquote>
 
-<p>A rules engine is a collection of objects with conditions and actions. Businesses can run their process model against it and let it run through the conditions.</p>
+<p>vSphere with Tanzu integrates Kubernetes and containers into the vSphere ecosystem, providing an unique capability to run Kubernetes workloads directly on ESXi hosts.</p>
 
-<p>An example would be:</p>
+<p>With the Tanzu feature turned on in vSphere, you can start running Kubernetes in two ways:</p>
 <ul>
-  <li>Company’s credit score of 50 or less will be given the status of “Disallow”.</li>
+  <li>run containers directly in ESXi host via <strong>vSphere Pod</strong> service (requires NSX-T)</li>
+  <li>run Tanzu Kubernetes cluster via <strong>Tanzu Kubernetes Grid Service</strong></li>
 </ul>
 
-<p>These are a few benefits of using a rules engine:</p>
-<ul>
-  <li>Logical separation of rules from application code.</li>
-  <li>Human-readable rule which allows non-technical folks to understand the rules easily.</li>
-  <li>Centralization of rules provides flexibility to make adjustment easily without the need of going through the application codes.</li>
-  <li>Rules can be reused.</li>
-</ul>
-
-<p><strong>What is a business rule</strong></p>
+<h3 id="vsphere-pod">vSphere Pod</h3>
 <blockquote>
-  <p>“A business rule defines or constrains some aspect of business and always resolves to either true or false. It specifically involves terms, facts and rules. 
-Business rules are intended to assert business structure or to control or influence the behavior of the business.” - Wikipedia</p>
+  <p>“<strong>vSphere Pod</strong> allows container workloads to be deployed directly in the ESXi host. It is Open Container Initiative (OCI) compatible and can run containers from any operating system as long as the containers are OCI compatible.”</p>
 </blockquote>
 
-<p>Business rules are essential to guide and help in decision making. Businesses would aim to automate them but not every business decision can be automated. The goal is to
-automate repeatable operational decisions.</p>
+<p>For a detailed explanation on vSphere Pod, you can visit <a href="https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-276F809D-2015-4FC6-92D8-8539D491815E.html">here</a>.</p>
 
-<p>An example would be something like this:</p>
+<h3 id="tanzu-kubernetes-grid-service">Tanzu Kubernetes Grid Service</h3>
+<blockquote>
+  <p>“<strong>Tanzu Kubernetes Grid Service</strong> allows Kubernetes cluster to be deployed or consumed in a self-service manner.”</p>
+</blockquote>
+
+<p>For a detailed explanation on Tanzu Kubernetes Grid service, you can visit <a href="https://docs.vmware.com/en/VMware-vSphere/7.0/vmware-vsphere-with-tanzu/GUID-4D0D375F-C001-4F1D-AAB1-1789C5577A94.html#GUID-4D0D375F-C001-4F1D-AAB1-1789C5577A94">here</a>.</p>
+
+<h2 id="architecture">Architecture</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/121887969-0334d480-cd4a-11eb-9f99-18816e7be2eb.png" alt="Vsphere with Tanzu Architecture" /></p>
+
+<p>With the Tanzu feature turned on in vSphere:</p>
 <ul>
-  <li>A bank would disapprove a loan to a customer/company which has a credit rating of 50 or lower.</li>
+  <li>Kubernetes control planes are deployed into the ESXi hosts which enables the capability to run Kubernetes workloads within ESXi</li>
+  <li>It creates a Supervisor cluster, a layer which overlays the ESXi hosts</li>
+  <li>Within the Supervisor cluster, an administrator would need to create vSphere namespace to either run vSphere Pods or Tanzu Kubernetes cluster, which provides quota management and isolation, very similar to <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/">Kubernetes’s namespace concept</a>.</li>
 </ul>
 
-<h2 id="set-up">Set up</h2>
-<p>There are many ways to set up RHDM and here is how I set it up:</p>
+<h2 id="use-case">Use case</h2>
+<p>For organizations who are running a lot of virtual machine (VM) workloads and are looking to start modernizing their applications, vSphere with Tanzu removes the need to go through complicated steps to create a Kubernetes cluster manually. It also provides a single
+pane of glass to manage both VM and container workloads. This is an awesome experience from an operating perspective where you can manage resources for Kubernetes workloads the same way VM resources are managed.</p>
 
-<p><img src="https://user-images.githubusercontent.com/25560159/90087001-4d29e400-dd4e-11ea-8501-3dc3ebe5eaf3.png" alt="RHDM Arch" /></p>
+<p>Apart from organizations who are starting their Kubernetes journey, vSphere with Tanzu is also ideal as an environment setup for testing/development even if one already has a production Kubernetes cluster. One key feature on vSphere is that the Tanzu Kubernetes cluster can be provisioned
+in a self-service manner which is highly efficient for testing applications. This could possibly reduce the need for an infrastructure as code (IaC) tool to a certain extent as vSphere takes care of it now. Also, vSphere with Tanzu comes with many out of the box capabilities like load balancing, container networking, container registry etc. All these features make the setup of a 
+Kubernetes cluster easy.</p>
 
-<ul>
-  <li>Decision Central - An authoring environment with GUI to allow low code development (DMN, DRL rules, decision table, etc). It also manages Kjars deployments to multiple Kie Servers.</li>
-  <li>KIE Server - It hosts the decision services which execute rules and processes. KIE server exposes its functionality via REST, JMS and Java interfaces to client applications.</li>
-  <li>Git - It stores business assets such as DMN model, decision tables, etc. In my case, it stores the DRL rules.</li>
-</ul>
-
-<p>My RHDM sits on OpenShift Container Platform where my KIE server runs in a container and is able to leverage on Kubernetes’s capabilities (self-healing, etc). 
-Whenever I update and commit my rules to the Git server, it automatically triggers the CI/CD flow to deploy the new set of rules embedded into the KIE server, and roll out the
-container deployment using a rolling update strategy where the previous instance is terminated only when the new one is ready.</p>
-
-<p>Here is how I write my rules in DRL:</p>
-
-<p><img src="https://user-images.githubusercontent.com/25560159/90090035-8ca7fe80-dd55-11ea-996f-611548b7477b.png" alt="DRL" /></p>
-
-<p>I used the Decision Central to create a Result object and write my DRL rules. My DRL rules are simple, I am bascially writing a condition where a score of less than 70% would mean not fraud and a score of more than 70% means fraud. 
-Afterwhich, I built and deployed my KIE server with the DRL rules. When the KIE server is deployed successfully, my application sends a payload with the score and receives a response payload containing the status.</p>
-
-<p>My written rules can be found on my Git Hub, <a href="https://github.com/jiajunngjj/drl-fraud-demo">https://github.com/jiajunngjj/drl-fraud-demo</a> which can be imported directly onto Decision Central as well.
-There are many ways to create your decision service and since my project is just a simple set of rules, DRL rules are sufficient.</p>
+<p>For organizations who are looking to run a production Kubernetes cluster, vSphere with Tanzu can also be a starting point because you can extend the capabilities whenever you need it. Referring back to the CNCF landscape, with so many tools out there, the question is how do you know what you need? 
+You will only know when you start using it. Tanzu Kubernetes comes with different editions where you can add on the capabilities. The concept here is to start small, and grow it when the capability is there.</p>
 
 <h2 id="conclusion">Conclusion</h2>
-<p>It is always the best practice to externalize rules from applications to allow a more agile and efficient development. 
-There are many use cases which RHDM can be part of the solution from fraud detection in banking industry to automated trading in capital markets and etc.</p>
+<p>The idea is to have a single platform to manage different kinds of applications, from monolithic applications to cloud native
+applications. With Kubernetes integrated into the vSphere ecosystem, Kubernetes workload can leverage on vSphere features (vMotion, Distributed Resource Scheduler (DRS), etc) to further provide stability to the applications.</p>
 
-<p>While driving applications with external business rules is beneficial, 
-it is also important to note that it is an additional layer to an application architecture, hence the application and its requirements should be carefully designed to ensure it can leverage on the external engine with
-minimal to zero application code change when a rule changes.</p>
+<p>vSphere with Tanzu is a good start for organizations who are looking to kickstart their Kubernetes journey. 
+Depending on the Kubernetes capability, this feature can be a bridge to the containers world, upskilling the infrastructure folks, bringing the organization forward together as one unit.</p>
 
 
         
@@ -479,23 +472,23 @@ minimal to zero application code change when a rule changes.</p>
     
       
       
-      <a href="/tags/#appdev" class="page__taxonomy-item" rel="tag">appdev</a><span class="sep">, </span>
+      <a href="/tags/#containers" class="page__taxonomy-item" rel="tag">containers</a><span class="sep">, </span>
     
       
       
-      <a href="/tags/#decision-manager" class="page__taxonomy-item" rel="tag">decision manager</a><span class="sep">, </span>
+      <a href="/tags/#kubernetes" class="page__taxonomy-item" rel="tag">kubernetes</a><span class="sep">, </span>
     
       
       
-      <a href="/tags/#drools" class="page__taxonomy-item" rel="tag">drools</a><span class="sep">, </span>
+      <a href="/tags/#tanzu" class="page__taxonomy-item" rel="tag">tanzu</a><span class="sep">, </span>
     
       
       
-      <a href="/tags/#jboss" class="page__taxonomy-item" rel="tag">jboss</a><span class="sep">, </span>
+      <a href="/tags/#vmware" class="page__taxonomy-item" rel="tag">vmware</a><span class="sep">, </span>
     
       
       
-      <a href="/tags/#redhat" class="page__taxonomy-item" rel="tag">redhat</a>
+      <a href="/tags/#vsphere" class="page__taxonomy-item" rel="tag">vsphere</a>
     
     </span>
   </p>
@@ -504,7 +497,7 @@ minimal to zero application code change when a rule changes.</p>
 
 
         
-  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time></p>
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-06-10T00:00:00+08:00">June 10, 2021</time></p>
 
 
       </footer>
@@ -514,25 +507,24 @@ minimal to zero application code change when a rule changes.</p>
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=Externalize+Your+Business+Rules+With+Red+Hat+Decision+Manager%20http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=Why+vSphere+with+Tanzu%3F%20http%3A%2F%2Flocalhost%3A4000%2F2021%2F06%2F10%2Fwhy-vsphere-with-tanzu" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
-  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021%2F06%2F10%2Fwhy-vsphere-with-tanzu" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules&title=Externalize Your Business Rules With Red Hat Decision Manager" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F06%2F10%2Fwhy-vsphere-with-tanzu&title=Why vSphere with Tanzu?" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
 
-  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2020%2F08%2F12%2Fexternalize-your-business-rules" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F06%2F10%2Fwhy-vsphere-with-tanzu" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>
 
 
       
   <nav class="pagination">
     
-      <a href="/2020/05/11/quarkus-openshift-serverless" class="pagination--pager" title="Quarkus, a lightweight Java for Serverless
+      <a href="/2021/04/16/add-salt-to-your-environment" class="pagination--pager" title="Adding Salt To Your Environment
 ">Previous</a>
     
     
-      <a href="/2020/10/14/intro-to-devops" class="pagination--pager" title="Introduction to Dev + Ops
-">Next</a>
+      <a href="#" class="pagination--pager disabled">Next</a>
     
   </nav>
 
@@ -546,54 +538,6 @@ minimal to zero application code change when a rule changes.</p>
     <div class="page__related">
       <h4 class="page__related-title">You may also enjoy</h4>
       <div class="grid__wrapper">
-        
-          
-
-
-
-<div class="grid__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/2021/06/10/why-vsphere-with-tanzu" rel="permalink">Why vSphere with Tanzu?
-</a>
-      
-    </h2>
-    
-
-
-  <p class="page__meta">
-
-    
-      
-      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
-      <time datetime="2021-06-10T00:00:00+08:00">June 10, 2021</time>
-    
-
-    
-      
-        <br \>
-      
-    
-
-    
-      
-      
-
-      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
-      
-        4 minute read
-      
-    
-
-  </p>
-
-    <p class="archive__item-excerpt" itemprop="description">Are you running your own Kubernetes cluster already? If so, how are you managing it currently?
-</p>
-  </article>
-</div>
-
         
           
 
@@ -739,6 +683,53 @@ t...</p>
 </div>
 
         
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2020/08/12/externalize-your-business-rules" rel="permalink">Externalize Your Business Rules With Red Hat Decision Manager
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-08-12T00:00:00+08:00">August 12, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">In this post, I will be sharing my experience on using Red Hat Decision Manager (RHDM) as the rules engine, using DRL (Drools Rule Language) rules to isolate...</p>
+  </article>
+</div>
+
+        
       </div>
     </div>
   
@@ -828,8 +819,8 @@ t...</p>
     
   <script>
     var disqus_config = function () {
-      this.page.url = "http://localhost:4000/2020/08/12/externalize-your-business-rules";  /* Replace PAGE_URL with your page's canonical URL variable */
-      this.page.identifier = "/2020/08/12/Externalize-Your-Business-Rules"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+      this.page.url = "http://localhost:4000/2021/06/10/why-vsphere-with-tanzu";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2021/06/10/When-You-Should-Use-Tanzu-Kubernetes"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
     };
     (function() { /* DON'T EDIT BELOW THIS LINE */
       var d = document, s = d.createElement('script');
