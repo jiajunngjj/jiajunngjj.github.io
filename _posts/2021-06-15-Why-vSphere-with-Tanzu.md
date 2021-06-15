@@ -65,12 +65,22 @@ With the Tanzu feature turned on in vSphere:
 * Within the Supervisor cluster, an administrator would need to create vSphere namespace to either run vSphere Pods or Tanzu Kubernetes cluster, which provides quota management and isolation, very similar to [Kubernetes's namespace concept](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/).
 
 ## Use case
+![usecase1-vsphere and kubernetes workload](https://user-images.githubusercontent.com/25560159/122066698-8bd47300-ce25-11eb-805c-2710a9ab3ee0.png)
+<sub><sup>Use case #1
+
 For organizations who are running a lot of virtual machine (VM) workloads and are looking to start modernizing their applications, vSphere with Tanzu removes the need to go through complicated steps to create a Kubernetes cluster manually. It also provides a single
 pane of glass to manage both VM and container workloads. This is an awesome experience from an operating perspective where you can manage resources for Kubernetes workloads the same way VM resources are managed.
+
+
+![usecase2](https://user-images.githubusercontent.com/25560159/122068503-0b167680-ce27-11eb-8f14-df59bb3bdffb.png)
+<sub><sup>Use case #2
 
 Apart from organizations who are starting their Kubernetes journey, vSphere with Tanzu is also ideal as an environment setup for testing/development even if one already has a production Kubernetes cluster. One key feature on vSphere is that the Tanzu Kubernetes cluster can be provisioned
 in a self-service manner which is highly efficient for testing applications. This could possibly reduce the need for an infrastructure as code (IaC) tool to a certain extent as vSphere takes care of it now. Also, vSphere with Tanzu comes with many out of the box capabilities like load balancing, container networking, container registry etc. All these features make the setup of a 
 Kubernetes cluster easy.
+
+![usecase3-tanzu advanced](https://user-images.githubusercontent.com/25560159/122068908-5b8dd400-ce27-11eb-8644-59d11576468f.png)
+<sub><sup>[Use case #3](https://tanzu.vmware.com/tanzu/advanced)
 
 For organizations who are looking to run a production Kubernetes cluster, vSphere with Tanzu can also be a starting point because you can extend the capabilities whenever you need it. Referring back to the CNCF landscape, with so many tools out there, the question is how do you know what you need? 
 You will only know when you start using it. Tanzu Kubernetes comes with different editions where you can add on the capabilities. The concept here is to start small, and grow it when the capability is there.

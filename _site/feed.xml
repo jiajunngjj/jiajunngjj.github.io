@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-06-15T21:45:19+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Why vSphere with Tanzu?</title><link href="http://localhost:4000/2021/06/10/why-vsphere-with-tanzu" rel="alternate" type="text/html" title="Why vSphere with Tanzu?" /><published>2021-06-10T00:00:00+08:00</published><updated>2021-06-10T00:00:00+08:00</updated><id>http://localhost:4000/2021/06/10/When-You-Should-Use-Tanzu-Kubernetes</id><content type="html" xml:base="http://localhost:4000/2021/06/10/why-vsphere-with-tanzu">&lt;p&gt;Are you running your own Kubernetes cluster already? If so, how are you managing it currently?&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-06-15T22:17:30+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Why vSphere with Tanzu?</title><link href="http://localhost:4000/2021/06/15/why-vsphere-with-tanzu" rel="alternate" type="text/html" title="Why vSphere with Tanzu?" /><published>2021-06-15T00:00:00+08:00</published><updated>2021-06-15T00:00:00+08:00</updated><id>http://localhost:4000/2021/06/15/Why-vSphere-with-Tanzu</id><content type="html" xml:base="http://localhost:4000/2021/06/15/why-vsphere-with-tanzu">&lt;p&gt;Are you running your own Kubernetes cluster already? If so, how are you managing it currently?&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/121776669-c25d8400-cbc0-11eb-9e03-1740919b10f3.png&quot; alt=&quot;kubernetes cluster&quot; /&gt;&lt;/p&gt;
 
@@ -63,12 +63,21 @@ infrastructure perspective.&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&quot;use-case&quot;&gt;Use case&lt;/h2&gt;
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/122066698-8bd47300-ce25-11eb-805c-2710a9ab3ee0.png&quot; alt=&quot;usecase1-vsphere and kubernetes workload&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;Use case #1&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
+
 &lt;p&gt;For organizations who are running a lot of virtual machine (VM) workloads and are looking to start modernizing their applications, vSphere with Tanzu removes the need to go through complicated steps to create a Kubernetes cluster manually. It also provides a single
 pane of glass to manage both VM and container workloads. This is an awesome experience from an operating perspective where you can manage resources for Kubernetes workloads the same way VM resources are managed.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/122068503-0b167680-ce27-11eb-8f14-df59bb3bdffb.png&quot; alt=&quot;usecase2&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;Use case #2&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
 
 &lt;p&gt;Apart from organizations who are starting their Kubernetes journey, vSphere with Tanzu is also ideal as an environment setup for testing/development even if one already has a production Kubernetes cluster. One key feature on vSphere is that the Tanzu Kubernetes cluster can be provisioned
 in a self-service manner which is highly efficient for testing applications. This could possibly reduce the need for an infrastructure as code (IaC) tool to a certain extent as vSphere takes care of it now. Also, vSphere with Tanzu comes with many out of the box capabilities like load balancing, container networking, container registry etc. All these features make the setup of a 
 Kubernetes cluster easy.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/122068908-5b8dd400-ce27-11eb-8644-59d11576468f.png&quot; alt=&quot;usecase3-tanzu advanced&quot; /&gt;
+&lt;sub&gt;&lt;sup&gt;&lt;a href=&quot;https://tanzu.vmware.com/tanzu/advanced&quot;&gt;Use case #3&lt;/a&gt;&lt;/sup&gt;&lt;/sub&gt;&lt;/p&gt;
 
 &lt;p&gt;For organizations who are looking to run a production Kubernetes cluster, vSphere with Tanzu can also be a starting point because you can extend the capabilities whenever you need it. Referring back to the CNCF landscape, with so many tools out there, the question is how do you know what you need? 
 You will only know when you start using it. Tanzu Kubernetes comes with different editions where you can add on the capabilities. The concept here is to start small, and grow it when the capability is there.&lt;/p&gt;
