@@ -1,0 +1,976 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Integrate Snyk Into Google Cloud Build - JJ’s Blog</title>
+<meta name="description" content="Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?">
+
+
+  <meta name="author" content="Jia Jun Ng (JJ)">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="JJ's Blog">
+<meta property="og:title" content="Integrate Snyk Into Google Cloud Build">
+<meta property="og:url" content="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build">
+
+
+  <meta property="og:description" content="Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2021-12-22T00:00:00+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jia Jun Ng (JJ)",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://jjblog.io/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/archives/">Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/tags/">Tags</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Jia Jun Ng (JJ)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://www.snyk.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-building" aria-hidden="true"></i><span class="label">Snyk</span></a></li>
+          
+        
+          
+            <li><a href="#" rel="nofollow noopener noreferrer"><i class="fas fa-fw fas fa-map-marker-alt" aria-hidden="true"></i><span class="label">Singapore</span></a></li>
+          
+        
+          
+            <li><a href="mailto:ngjiajun13@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Integrate Snyk Into Google Cloud Build">
+    <meta itemprop="description" content="Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?">
+    <meta itemprop="datePublished" content="2021-12-22T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Integrate Snyk Into Google Cloud Build
+</h1>
+          
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-12-22T00:00:00+08:00">December 22, 2021</time>
+    
+
+    
+      
+      <span class="post__meta-sep"></span>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-clock" aria-hidden="true"></i>
+      
+        5 minute read
+      
+    
+
+  </p>
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> Table of Contents</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#what-is-snyk-cli">What is Snyk CLI</a></li>
+  <li><a href="#setup">Setup</a>
+    <ul>
+      <li><a href="#snyk-setup">Snyk Setup</a></li>
+      <li><a href="#google-cloud-build-setup">Google Cloud Build Setup</a>
+        <ul>
+          <li><a href="#run-snyk-open-source-test">Run Snyk Open Source Test</a></li>
+          <li><a href="#run-snyk-code-test">Run Snyk Code Test</a></li>
+          <li><a href="#run-snyk-container-test">Run Snyk Container Test</a></li>
+          <li><a href="#run-snyk-iac-test">Run Snyk IaC Test</a></li>
+          <li><a href="#create-html-report-and-store-it-in-your-google-cloud-storage">Create HTML report and store it in your Google Cloud Storage</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#sample-output">Sample Output</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+            </nav>
+            <div><br></div>
+            <div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7994597077208765"
+                    crossorigin="anonymous"></script>
+            <!-- TOC -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-7994597077208765"
+                 data-ad-slot="1435039789"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            </div>
+          </aside>
+        
+        <p>Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/147042759-5e92873d-e1db-41f8-ad09-65f410698766.png" alt="Snyk Google Cloud Build" /></p>
+
+<p>In this post today, I will be sharing on how to integrate Snyk into Google Cloud Build as there isn’t any native support available yet.</p>
+
+<p>There are way too many options when it comes to choosing your pipeline engine. The obvious choice should be of a balance of integration options and team expertise.
+Previously, I have written blog posts on <a href="https://jjblog.io/2020/10/14/intro-to-devops">DevOps</a> and
+<a href="https://jjblog.io/2021/03/04/intro-to-devsecops">DevSecOps</a>, and have shared examples for some of the tools to set up the pipeline. So why Google Cloud Build?
+I believe it is because of its native cloud nature (serverless) which makes it simple to set up. I do have seen cloud native organisations moving towards Google Cloud Platform (GCP) with many having to like the idea of using
+with the GCP stack which includes the Google Cloud Build.</p>
+
+<p>Today’s topic is on Snyk integration; although Snyk supports a wide variety of CI/CD tools (e.g Jenkins) but there isn’t native support for Google Cloud Build yet.
+In such cases, the integration with Snyk will have to be through the Snyk command-line interface (Snyk CLI).</p>
+
+<h2 id="what-is-snyk-cli">What is Snyk CLI</h2>
+<p><img src="https://user-images.githubusercontent.com/25560159/147044601-7770a8e8-e353-42ec-867f-59d4d90dda57.png" alt="Snyk CLI" />
+<sub><sup><a href="https://docs.snyk.io/features/snyk-cli">Image Source</a></sup></sub></p>
+
+<blockquote>
+  <p>“<strong>Snyk CLI</strong> brings functionality of Snyk into your development workflow. It can be run locally, or in your CI/CD pipeline, to scan your projects for security issues.” - Snyk</p>
+</blockquote>
+
+<p>Snyk CLI allows “plug and play” integration to any pipeline workflow with the flexibility to trigger a scan in different stages.
+Snyk CLI is a Node.JS application which you can install using <code class="language-plaintext highlighter-rouge">npm</code> or <code class="language-plaintext highlighter-rouge">yarn</code>.</p>
+
+<p>There are other methods to install such as using a Docker image which I will be using in my setup.
+In the official documentation <a href="https://docs.snyk.io/features/snyk-cli/install-the-snyk-cli">here</a>, you will be able to find the different installation methods.</p>
+
+<h2 id="setup">Setup</h2>
+<p>In my setup, I will be building a Node.js application which is hosted on my personal GitHub, <a href="https://github.com/jiajunngjj/goof">https://github.com/jiajunngjj/goof</a>.
+I will be running Snyk Container in Google Cloud Build to run a couple of Snyk tests :</p>
+<ul>
+  <li>Code analysis (SAST)</li>
+  <li>Software composition analysis (SCA)</li>
+  <li>Scanning of container images</li>
+  <li>Scanning of infrastructure as code (IaC) files</li>
+</ul>
+
+<p>Also, I will show how to generate a HTML report for my SCA portion using <a href="https://github.com/snyk/snyk-to-html">snyk-to-html</a>, a Snyk utility to convert JSON output to HTML,
+and store the artifact in my Google Cloud Storage.</p>
+
+<h3 id="snyk-setup">Snyk Setup</h3>
+<p>On Snyk Platform, retrieve the access token from the service account (sign up for an account if you don’t have one).
+Go to Settings -&gt; Service accounts, create a new service account to generate the token.</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/147032928-c484b746-2bae-42b6-a3c6-338da9640543.png" alt="Snyk Settings" /></p>
+
+<h3 id="google-cloud-build-setup">Google Cloud Build Setup</h3>
+
+<ol>
+  <li>
+    <p>In the GCP console, navigate to Cloud Build. Go to Triggers, creates a new trigger.</p>
+  </li>
+  <li>
+    <p>In the Trigger page, add the Node.js application GitHub repository under Source. Follow the steps in Connect repository to connect.</p>
+  </li>
+  <li>
+    <p>In the Trigger page, add a variable, <code class="language-plaintext highlighter-rouge">_SNYK_TOKEN</code>, with the access token from Snyk Setup.</p>
+  </li>
+  <li>
+    <p>In the Trigger page, create the Inline YAML with the following content under Configuration (<em>cloudbuild.yaml</em>):</p>
+  </li>
+</ol>
+
+<h4 id="run-snyk-open-source-test">Run Snyk Open Source Test</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk test --severity-threshold=medium
+    id: Snyk Open Source Test
+    entrypoint: bash
+</code></pre></div></div>
+
+<h4 id="run-snyk-code-test">Run Snyk Code Test</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk code test --severity-threshold=medium
+    id: Snyk Code Test
+    entrypoint: bash
+</code></pre></div></div>
+
+<h4 id="run-snyk-container-test">Run Snyk Container Test</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk container test --severity-threshold=medium jiajunngjj/docker-goof:latest
+    id: Snyk Container Test
+    entrypoint: bash
+</code></pre></div></div>
+
+<h4 id="run-snyk-iac-test">Run Snyk IaC Test</h4>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk iac test --severity-threshold=medium main.tf
+    id: Snyk IaC Test
+    entrypoint: bash
+</code></pre></div></div>
+
+<h4 id="create-html-report-and-store-it-in-your-google-cloud-storage">Create HTML report and store it in your Google Cloud Storage</h4>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        set -o pipefail
+        snyk test --severity-threshold=medium --json | snyk-to-html -o results.html || true
+    id: Create HTML artifact
+    entrypoint: bash
+artifacts:
+  objects:
+    location: 'gs://jjng-store/scan_output'
+    paths:
+      - results.html
+</code></pre></div></div>
+<p>Here are some notes for my configurations above:</p>
+<ul>
+  <li>Snyk Docker image, <code class="language-plaintext highlighter-rouge">snyk/snyk-cli:npm</code>, is used to run Snyk CLI</li>
+  <li><code class="language-plaintext highlighter-rouge">--severity-threshold=medium</code> to flag out vulnerabilities of medium or higher severity, meaning if there is any of vulnerabilities of severity medium or higher, the build will fail</li>
+  <li><code class="language-plaintext highlighter-rouge">|| true</code> to provide exit code 0 as the build needs to be successful in order to save the artifact in the Google Cloud Storage</li>
+  <li>The assumption that you have built your container image and pushed it to a container registry (Docker Hub in my example) hence you’re running
+the image scan by specifying the container image directly on the registry</li>
+</ul>
+
+<p>Here is the combined version of the above Snyk tests, which makes sense in the software development lifecycle (SDLC) where you scan application codebase for SAST and SCA, scan container base images before building your containers, and scan the IaC files before provisioning the infrastructure:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>steps:
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk test --severity-threshold=medium || true
+    id: Snyk Open Source Test
+    entrypoint: bash
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk code test --severity-threshold=medium || true
+    id: Snyk Code Test
+    entrypoint: bash
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk container test --severity-threshold=medium jiajunngjj/docker-goof:latest
+    id: Snyk Container Test
+    entrypoint: bash
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        snyk iac test --severity-threshold=medium main.tf || true
+    id: Snyk IaC Test
+    entrypoint: bash
+  - name: snyk/snyk-cli:npm
+    args:
+      - '-c'
+      - |-
+        snyk config set api=${_SNYK_TOKEN}
+        set -o pipefail
+        snyk test --severity-threshold=medium --json | snyk-to-html -o results.html || true
+    id: Create HTML artifact
+    entrypoint: bash
+artifacts:
+  objects:
+    location: 'gs://jjng-store/scan_output'
+    paths:
+      - results.html
+</code></pre></div></div>
+<p>Note that I have set <code class="language-plaintext highlighter-rouge">|| true</code> above to make sure all tests pass.</p>
+
+<h2 id="sample-output">Sample Output</h2>
+<p>Here is a sample output of a failed build of Snyk Code Test:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/147050780-e81c535b-0178-4a30-ab40-8c43acc7874f.png" alt="Failed build" /></p>
+
+<p>Here is a sample output of my Google Cloud Storage:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/147051058-23a77950-92bd-40b2-8105-eb5e03d98adf.png" alt="HTML report storage" /></p>
+
+<p>Here is a sample output of my HTML artifact:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/147051128-4044c783-9383-4949-89c0-1cb997ab847e.png" alt="HTML report" /></p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>Mandating security is a must when it comes to building software, especially in the agile world today where there are a lot of moving pieces. Snyk CLI helps to streamline various security tests in the SDLC, covering different
+aspects of security from SAST and SCA to building container and provisioning infrastructure.</p>
+
+<p>Most importantly, Snyk CLI makes it possible to integrate with any CI/CD tool and all these tests can be automated (just like the example above), bringing agility to the development team.</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#devops" class="page__taxonomy-item" rel="tag">Devops</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#devsecops" class="page__taxonomy-item" rel="tag">DevSecOps</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#gcp" class="page__taxonomy-item" rel="tag">GCP</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#snyk" class="page__taxonomy-item" rel="tag">Snyk</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2021-12-22T00:00:00+08:00">December 22, 2021</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=Integrate+Snyk+Into+Google+Cloud+Build%20http%3A%2F%2Flocalhost%3A4000%2F2021%2F12%2F22%2Fintegrate-snyk-into-google-cloud-build" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2021%2F12%2F22%2Fintegrate-snyk-into-google-cloud-build" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F12%2F22%2Fintegrate-snyk-into-google-cloud-build&title=Integrate Snyk Into Google Cloud Build" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2021%2F12%2F22%2Fintegrate-snyk-into-google-cloud-build" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2021/06/15/why-vsphere-with-tanzu" class="pagination--pager" title="Why vSphere with Tanzu?
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/06/15/why-vsphere-with-tanzu" rel="permalink">Why vSphere with Tanzu?
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-06-15T00:00:00+08:00">June 15, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Are you running your own Kubernetes cluster already? If so, how are you managing it currently?
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/04/16/add-salt-to-your-environment" rel="permalink">Adding Salt To Your Environment
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-04-16T00:00:00+08:00">April 16, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/03/04/intro-to-devsecops" rel="permalink">Introduction to Dev + Sec + Ops
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-03-04T00:00:00+08:00">March 4, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">What is DevSecOps
+DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have alread...</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2020/10/14/intro-to-devops" rel="permalink">Introduction to Dev + Ops
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2020-10-14T00:00:00+08:00">October 14, 2020</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        5 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">The word “DevOps” is a common buzzword which is familiar and of course it does mean different things to many people. Hence in this post, I will be sharing 
+t...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7994597077208765"
+              crossorigin="anonymous"></script>
+      <div align="center" style="margin: 1em 0;">
+      <!-- Footer -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7994597077208765"
+           data-ad-slot="1486531742"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      </div>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- end customooter snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2021 Jia Jun Ng (JJ). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>. | <a href="https://jjblog.io/sitemap.xml" rel="nofollow">Sitemap (XML)</a></div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2021/12/22/Integrate-Snyk-Into-Google-Cloud-Build"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-jiajunng-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>
