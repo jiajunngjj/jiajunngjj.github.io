@@ -49,7 +49,7 @@ var store = [{
       },{
         "title": "Integrate Snyk Into Google Cloud Build",
         "excerpt":"Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages? In this post today, I will be sharing on how to integrate Snyk into Google Cloud Build as there isn’t any native support available yet....","categories": [],
-        "tags": ["DevSecOps","Devops","GCP","Snyk"],
+        "tags": ["DevSecOps","Devops","GCP","Snyk","GoogleCloudBuild"],
         "url": "http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build",
         "teaser": null
       }]

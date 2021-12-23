@@ -5,6 +5,7 @@ tags:
 - Devops
 - GCP
 - Snyk
+- GoogleCloudBuild
 permalink: /:year/:month/:day/integrate-snyk-into-google-cloud-build
 ---
 Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?
