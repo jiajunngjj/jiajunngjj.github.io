@@ -1,5 +1,5 @@
 ---
-title: "How to run Snyk tests in CircleCI and Argo CD?"
+title: "How to run Snyk test in CircleCI and Argo CD?"
 tags:
 - DevSecOps
 - Devops
