@@ -1,0 +1,967 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.20.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>How to run Snyk tests in CircleCI and Argo CD? - JJ’s Blog</title>
+<meta name="description" content="How do you secure GitOps pipeline? In this post today, I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.">
+
+
+  <meta name="author" content="Jia Jun Ng (JJ)">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="JJ's Blog">
+<meta property="og:title" content="How to run Snyk tests in CircleCI and Argo CD?">
+<meta property="og:url" content="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">
+
+
+  <meta property="og:description" content="How do you secure GitOps pipeline? In this post today, I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.">
+
+
+
+
+
+
+
+  <meta property="article:published_time" content="2022-06-02T00:00:00+08:00">
+
+
+
+
+
+  
+
+  
+
+
+<link rel="canonical" href="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Jia Jun Ng (JJ)",
+      "url": "http://localhost:4000/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/feed.xml" type="application/atom+xml" rel="alternate" title="JJ's Blog Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+           
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="https://jjblog.io/">Home</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/about/">About</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/archives/">Archives</a>
+            </li><li class="masthead__menu-item">
+              <a href="https://jjblog.io/tags/">Tags</a>
+            </li></ul>
+        
+        <button class="search__toggle" type="button">
+          <span class="visually-hidden">Toggle search</span>
+          <svg class="icon" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.99 16">
+            <path d="M15.5,13.12L13.19,10.8a1.69,1.69,0,0,0-1.28-.55l-0.06-.06A6.5,6.5,0,0,0,5.77,0,6.5,6.5,0,0,0,2.46,11.59a6.47,6.47,0,0,0,7.74.26l0.05,0.05a1.65,1.65,0,0,0,.5,1.24l2.38,2.38A1.68,1.68,0,0,0,15.5,13.12ZM6.4,2A4.41,4.41,0,1,1,2,6.4,4.43,4.43,0,0,1,6.4,2Z" transform="translate(-.01)"></path>
+          </svg>
+        </button>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+    <div class="author__avatar">
+      
+        <img src="/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+      
+    </div>
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name">Jia Jun Ng (JJ)</h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        <p>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</p>
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+
+      
+        
+          
+            <li><a href="https://www.snyk.io" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-building" aria-hidden="true"></i><span class="label">Snyk</span></a></li>
+          
+        
+          
+            <li><a href="#" rel="nofollow noopener noreferrer"><i class="fas fa-fw fas fa-map-marker-alt" aria-hidden="true"></i><span class="label">Singapore</span></a></li>
+          
+        
+          
+            <li><a href="mailto:ngjiajun13@gmail.com" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">Email</span></a></li>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <li><a href="https://github.com/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">GitHub</span></a></li>
+          
+        
+          
+            <li><a href="https://www.linkedin.com/in/jiajunngjj" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span class="label">Linkedin</span></a></li>
+          
+        
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="How to run Snyk tests in CircleCI and Argo CD?">
+    <meta itemprop="description" content="How do you secure GitOps pipeline? In this post today,I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.">
+    <meta itemprop="datePublished" content="2022-06-02T00:00:00+08:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">How to run Snyk tests in CircleCI and Argo CD?
+</h1>
+          
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2022-06-02T00:00:00+08:00">June 2, 2022</time>
+    
+
+    
+      
+      <span class="post__meta-sep"></span>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> Table of Contents</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#circleci-setup-with-snyk">CircleCI Setup with Snyk</a>
+    <ul>
+      <li><a href="#requirements">Requirements</a></li>
+      <li><a href="#ci-workflow">CI Workflow</a></li>
+    </ul>
+  </li>
+  <li><a href="#argo-cd-setup-with-snyk">Argo CD Setup with Snyk</a></li>
+  <li><a href="#wrapping-up">Wrapping up</a></li>
+</ul>
+
+            </nav>
+            <div><br></div>
+            <div>
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7994597077208765"
+                    crossorigin="anonymous"></script>
+            <!-- TOC -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-7994597077208765"
+                 data-ad-slot="1435039789"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            </div>
+          </aside>
+        
+        <p>How do you secure GitOps pipeline? In this post today,
+I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/171653052-06379084-2a2f-41ed-bf17-1d9f84cac0da.png" alt="Snyk CircleCI ArgoCD" /></p>
+
+<p>GitOps is an interesting framework to manage and secure the application development pipeline. For instance, the GitOps workflow of an organization which deploys applications onto a K8s platform can be as follows:</p>
+<ol>
+  <li>Developers  deploy their codes to a Git repository</li>
+  <li>Triggers the CI/CD pipeline once the merge request is approved</li>
+  <li>Updating the declarative application configuration files</li>
+  <li>The CD tool picks it up from Git and detects the configuration drift</li>
+  <li>Deploy the application onto the K8s platform automatically to make sure that the desired state is achieved</li>
+</ol>
+
+<p>The above workflow can happen without giving developers direct access to the K8s cluster hence GitOps can definitely fill up the security gaps in distributed environments, and using Git as a single source of truth for declarative infrastructure and applications is just one of them.</p>
+
+<p>There are many tools which can implement GitOps in your application lifecycle and in this post today, the focus will be on using CircleCI as the continuous integration tool, and Argo CD as the declarative continuous delivery tool.</p>
+
+<h2 id="circleci-setup-with-snyk">CircleCI Setup with Snyk</h2>
+<p>CircleCI is a cloud based CI/CD tool which has built support for parallelism and Docker workflow, and CircleCI will be my CI tool.</p>
+
+<p>In my CircleCI, set up the integration with GitHub (I’m using GitHub as my Git repository). My repository can be found here:
+<a href="https://github.com/jiajunngjj/circleci-goof">https://github.com/jiajunngjj/circleci-goof</a>. Once the setup is completed, 
+you should be able to see the following workflow:</p>
+
+<p><img src="https://user-images.githubusercontent.com/25560159/171648416-a6f9a29f-4f26-45d1-ae19-fa0d82061621.png" alt="CircleCI workflow" /></p>
+
+<p>Here is the config.yml:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: 2.1
+orbs:
+  snyk: snyk/snyk@1.1.2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: npm install -q
+  snyk_code_test:
+    docker:
+    - image: snyk/snyk-cli:npm
+    steps:
+    - checkout
+    - run:
+        command: | 
+          snyk auth $SNYK_TOKEN
+          snyk code test || true
+  snyk_oss_test:
+    docker:
+    - image: circleci/node:4.8.2
+    steps:
+    - checkout
+    - snyk/scan:
+        token-variable: SNYK_TOKEN
+        fail-on-issues: false
+        monitor-on-build: false      
+  docker_build_push:
+    docker:
+      - image: cimg/node:18.0.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          TAG=0.1.&lt;&lt; pipeline.number &gt;&gt;
+          docker build -t $DOCKER_USERNAME/docker-goof:$TAG .
+          docker login -u $DOCKER_USERNAME --password $DOCKER_PASSWORD
+          docker push $DOCKER_USERNAME/docker-goof:$TAG 
+  snyk_container_test:
+    docker:
+    - image: snyk/snyk-cli:npm
+    steps:
+    - checkout
+    - run:
+        command: | 
+          TAG=0.1.&lt;&lt; pipeline.number &gt;&gt;
+          snyk auth $SNYK_TOKEN
+          snyk container test jiajunngjj/docker-goof:$TAG --file=./Dockerfile || true
+  trigger_argocd:
+    docker:
+      - image: cimg/base:2022.04
+    steps:
+      - run : |
+          TAG=0.1.&lt;&lt; pipeline.number &gt;&gt;
+          git clone https://github.com/jiajunngjj/argocd-goof.git
+          cd argocd-goof
+          sed -i 's/\(docker-goof\)\(.*\)/\1:'$TAG'/' goof/goof-deployment.yaml
+          git config user.email "ngjiajun13@gmail.com"
+          git config user.name "jiajunngjj"
+          git add goof/goof-deployment.yaml
+          git commit -m "update from circleci to trigger argocd"
+          git push https://$GITHUB_PERSONAL_TOKEN@github.com/jiajunngjj/argocd-goof.git 
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - snyk_code_test:
+          requires:
+            - build
+      - snyk_oss_test:
+          requires:
+            - build
+      - docker_build_push:
+          requires:
+            - snyk_code_test
+            - snyk_oss_test
+      - snyk_container_test:
+          requires:
+            - docker_build_push
+      - trigger_argocd:
+          requires:
+            - snyk_container_test
+</code></pre></div></div>
+<p>Note: I appended <code class="language-plaintext highlighter-rouge">|| true</code> to ensure my Snyk test succeeds so it can move to the next stage.</p>
+
+<h3 id="requirements">Requirements</h3>
+<ul>
+  <li>Snyk account</li>
+  <li>DockerHub account</li>
+  <li>Set up a variable, <code class="language-plaintext highlighter-rouge">SNYK_TOKEN</code>, using Snyk API token</li>
+  <li>Set up a variable, <code class="language-plaintext highlighter-rouge">GITHUB_PERSONAL_TOKEN</code>, to store your GitHub personal access token</li>
+  <li>Set up a variable, <code class="language-plaintext highlighter-rouge">DOCKER_USERNAME</code>, to store your DockerHub username</li>
+  <li>Set up a variable, <code class="language-plaintext highlighter-rouge">DOCKER_PASSWORD</code>, to store your DockerHub password</li>
+</ul>
+
+<h3 id="ci-workflow">CI Workflow</h3>
+<ol>
+  <li><em>build</em> - Build/Compile the application</li>
+  <li><em>snyk_code_test</em> - Run Snyk Code test (Static Application Security Testing (SAST))</li>
+  <li><em>snyk_oss_test</em> - Run Snyk Open Source test (Software Composition Analysis (SCA))</li>
+  <li><em>docker_build_push</em> - Run Docker workflow to build container image and push into my DockerHub repository</li>
+  <li><em>snyk_container_test</em> - Run Snyk Container test to scan the built image</li>
+  <li><em>trigger_argocd</em> - Update the git repository with the new image tag which Argo CD tracks</li>
+</ol>
+
+<h2 id="argo-cd-setup-with-snyk">Argo CD Setup with Snyk</h2>
+<p>Argo CD is a K8s native CD tool which tracks a repository and compares the application state with the current state of the K8s cluster. Then, it applies the required changes to the cluster configuration.
+I will be using Argo CD as the CD tool to deploy the application directly onto a K8s cluster. 
+Argo CD can be deployed either on K8s or VMs. My GitHub repository which CircleCI updates and Argo CD tracks, can be found here:
+<a href="https://github.com/jiajunngjj/argocd-goof">https://github.com/jiajunngjj/argocd-goof</a></p>
+
+<ol>
+  <li>Creates an application on your Argo CD: 
+<img src="https://user-images.githubusercontent.com/25560159/171633101-eba77e3e-efbb-4c5d-b04a-8cb99dece1bb.png" alt="Argo CD creates app" /></li>
+  <li>Click on the <code class="language-plaintext highlighter-rouge">Sync</code> button</li>
+</ol>
+
+<p>The above steps should create all the K8s objects (as per my GitHub repository) in your cluster.</p>
+
+<p>To run Snyk IaC scan on the K8s yaml files, you will need to create a K8s job object:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+   
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: snyk-iac-scan
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+spec:
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      containers:
+      - name: snyk-cli
+        image: snyk/snyk-cli:npm
+        command: ["/bin/sh","-c"]
+        args:
+          - git clone https://github.com/jiajunngjj/argocd-goof.git;
+            snyk auth $SNYK_TOKEN;
+            snyk iac test argocd-goof/goof/goof-deployment.yaml || true;
+        env:
+          - name: SNYK_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: snyk-token
+                key: token
+      restartPolicy: Never
+  backoffLimit: 0
+</code></pre></div></div>
+<p>Note that you will need to create a K8s secret, <code class="language-plaintext highlighter-rouge">SNYK_TOKEN</code> in the namespace (in my case is apples) which you’re going to deploy the applications.
+The <code class="language-plaintext highlighter-rouge">argocd.argoproj.io/hook: PreSync</code> will run the <code class="language-plaintext highlighter-rouge">snyk-cli</code> container, which runs the Snyk IaC test on my <code class="language-plaintext highlighter-rouge">goof-deployment.yaml</code> before the actual
+deployment of my <code class="language-plaintext highlighter-rouge">goof-deployment.yaml</code>. Any detection of vulnerabilities will fail the deployment.</p>
+
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>The entire CI/CD workflow is as follows:</p>
+
+<p><strong>CircleCI</strong></p>
+<ol>
+  <li>Build/Compile the application</li>
+  <li>Run Snyk Code test (SAST)</li>
+  <li>Run Snyk Open Source test (SCA)</li>
+  <li>Run Docker workflow to build container image and push into my DockerHub repository</li>
+  <li>Run Snyk Container test to scan the built image</li>
+  <li>Update the goof-deployment.yaml in my GitHub with the new image tag, which Argo CD tracks</li>
+</ol>
+
+<p><strong>Argo CD</strong></p>
+<ol>
+  <li>Detects the configuration drift</li>
+  <li>Starts to sync to achieve the new state</li>
+  <li>Triggers Snyk IaC scan</li>
+  <li>If Snyk IaC detects no vulnerabilities, goof-deployment.yaml will be deployed</li>
+</ol>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+  
+
+
+  
+  
+  
+
+  <p class="page__taxonomy">
+    <strong><i class="fas fa-fw fa-tags" aria-hidden="true"></i> Tags: </strong>
+    <span itemprop="keywords">
+    
+      
+      
+      <a href="/tags/#argocd" class="page__taxonomy-item" rel="tag">argocd</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#circleci" class="page__taxonomy-item" rel="tag">circleci</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#devops" class="page__taxonomy-item" rel="tag">Devops</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#devsecops" class="page__taxonomy-item" rel="tag">DevSecOps</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#gitops" class="page__taxonomy-item" rel="tag">gitops</a><span class="sep">, </span>
+    
+      
+      
+      <a href="/tags/#snyk" class="page__taxonomy-item" rel="tag">snyk</a>
+    
+    </span>
+  </p>
+
+
+
+
+        
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2022-06-02T00:00:00+08:00">June 2, 2022</time></p>
+
+
+      </footer>
+
+      <section class="page__share">
+  
+    <h4 class="page__share-title">Share on</h4>
+  
+
+  <a href="https://twitter.com/intent/tweet?text=How+to+run+Snyk+tests+in+CircleCI+and+Argo+CD%3F%20http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+
+  <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
+
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd&title=How to run Snyk tests in CircleCI and Argo CD?" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
+</section>
+
+
+      
+  <nav class="pagination">
+    
+      <a href="/2021/12/22/integrate-snyk-into-google-cloud-build" class="pagination--pager" title="Integrate Snyk Into Google Cloud Build
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+    <div class="page__related">
+      <h4 class="page__related-title">You may also enjoy</h4>
+      <div class="grid__wrapper">
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/12/22/integrate-snyk-into-google-cloud-build" rel="permalink">Integrate Snyk Into Google Cloud Build
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-12-22T00:00:00+08:00">December 22, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        5 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/06/15/why-vsphere-with-tanzu" rel="permalink">Why vSphere with Tanzu?
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-06-15T00:00:00+08:00">June 15, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Are you running your own Kubernetes cluster already? If so, how are you managing it currently?
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/04/16/add-salt-to-your-environment" rel="permalink">Adding Salt To Your Environment
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-04-16T00:00:00+08:00">April 16, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">Have you added “Salt” to your environment? Not the condiment, salt. I meant SaltStack’s Salt…
+</p>
+  </article>
+</div>
+
+        
+          
+
+
+
+<div class="grid__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/2021/03/04/intro-to-devsecops" rel="permalink">Introduction to Dev + Sec + Ops
+</a>
+      
+    </h2>
+    
+
+
+  <p class="page__meta">
+
+    
+      
+      <i class="far fa-fw fa-calendar-alt" aria-hidden="true"></i>
+      <time datetime="2021-03-04T00:00:00+08:00">March 4, 2021</time>
+    
+
+    
+      
+        <br \>
+      
+    
+
+    
+      
+      
+
+      <i class="far fa-fw fa-clock" aria-hidden="true"></i>
+      
+        4 minute read
+      
+    
+
+  </p>
+
+    <p class="archive__item-excerpt" itemprop="description">What is DevSecOps
+DevSecOps builds on top of the DevOps methodology where it addresses code quality and reliability assurance. You probably would have alread...</p>
+  </article>
+</div>
+
+        
+      </div>
+    </div>
+  
+  
+</div>
+
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7994597077208765"
+              crossorigin="anonymous"></script>
+      <div align="center" style="margin: 1em 0;">
+      <!-- Footer -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7994597077208765"
+           data-ad-slot="1486531742"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      </div>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
+    
+      <div class="search-content">
+        <div class="search-content__inner-wrap"><form class="search-content__form" onkeydown="return event.key != 'Enter';">
+    <label class="sr-only" for="search">
+      Enter your search term...
+    </label>
+    <input type="search" id="search" class="search-input" tabindex="-1" placeholder="Enter your search term..." />
+  </form>
+  <div id="results" class="results"></div></div>
+
+      </div>
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+<script data-ad-client="ca-pub-7994597077208765" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- end customooter snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+      <li><strong>Follow:</strong></li>
+    
+
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+
+    <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2022 Jia Jun Ng (JJ). Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>. | <a href="https://jjblog.io/sitemap.xml" rel="nofollow">Sitemap (XML)</a></div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+<script src="/assets/js/lunr/lunr.min.js"></script>
+<script src="/assets/js/lunr/lunr-store.js"></script>
+<script src="/assets/js/lunr/lunr-en.js"></script>
+
+
+
+
+    
+  <script>
+    var disqus_config = function () {
+      this.page.url = "http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd";  /* Replace PAGE_URL with your page's canonical URL variable */
+      this.page.identifier = "/2022/06/02/Snyk-With-CircleCI-And-ArgoCD"; /* Replace PAGE_IDENTIFIER with your page's unique identifier variable */
+    };
+    (function() { /* DON'T EDIT BELOW THIS LINE */
+      var d = document, s = d.createElement('script');
+      s.src = 'https://https-jiajunng-github-io.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+  
+
+
+
+
+
+  </body>
+</html>

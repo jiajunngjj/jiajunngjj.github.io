@@ -1,4 +1,206 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-12-23T09:33:06+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">Integrate Snyk Into Google Cloud Build</title><link href="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build" rel="alternate" type="text/html" title="Integrate Snyk Into Google Cloud Build" /><published>2021-12-22T00:00:00+08:00</published><updated>2021-12-22T00:00:00+08:00</updated><id>http://localhost:4000/2021/12/22/Integrate-Snyk-Into-Google-Cloud-Build</id><content type="html" xml:base="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build">&lt;p&gt;Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-06-02T23:01:15+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">How to run Snyk tests in CircleCI and Argo CD?</title><link href="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd" rel="alternate" type="text/html" title="How to run Snyk tests in CircleCI and Argo CD?" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>http://localhost:4000/2022/06/02/Snyk-With-CircleCI-And-ArgoCD</id><content type="html" xml:base="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">&lt;p&gt;How do you secure GitOps pipeline? In this post today,
+I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171653052-06379084-2a2f-41ed-bf17-1d9f84cac0da.png&quot; alt=&quot;Snyk CircleCI ArgoCD&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;GitOps is an interesting framework to manage and secure the application development pipeline. For instance, the GitOps workflow of an organization which deploys applications onto a K8s platform can be as follows:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Developers  deploy their codes to a Git repository&lt;/li&gt;
+  &lt;li&gt;Triggers the CI/CD pipeline once the merge request is approved&lt;/li&gt;
+  &lt;li&gt;Updating the declarative application configuration files&lt;/li&gt;
+  &lt;li&gt;The CD tool picks it up from Git and detects the configuration drift&lt;/li&gt;
+  &lt;li&gt;Deploy the application onto the K8s platform automatically to make sure that the desired state is achieved&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The above workflow can happen without giving developers direct access to the K8s cluster hence GitOps can definitely fill up the security gaps in distributed environments, and using Git as a single source of truth for declarative infrastructure and applications is just one of them.&lt;/p&gt;
+
+&lt;p&gt;There are many tools which can implement GitOps in your application lifecycle and in this post today, the focus will be on using CircleCI as the continuous integration tool, and Argo CD as the declarative continuous delivery tool.&lt;/p&gt;
+
+&lt;h2 id=&quot;circleci-setup-with-snyk&quot;&gt;CircleCI Setup with Snyk&lt;/h2&gt;
+&lt;p&gt;CircleCI is a cloud based CI/CD tool which has built support for parallelism and Docker workflow, and CircleCI will be my CI tool.&lt;/p&gt;
+
+&lt;p&gt;In my CircleCI, set up the integration with GitHub (I’m using GitHub as my Git repository). My repository can be found here:
+&lt;a href=&quot;https://github.com/jiajunngjj/circleci-goof&quot;&gt;https://github.com/jiajunngjj/circleci-goof&lt;/a&gt;. Once the setup is completed, 
+you should be able to see the following workflow:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171648416-a6f9a29f-4f26-45d1-ae19-fa0d82061621.png&quot; alt=&quot;CircleCI workflow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is the config.yml:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: 2.1
+orbs:
+  snyk: snyk/snyk@1.1.2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - run: npm install -q
+  snyk_code_test:
+    docker:
+    - image: snyk/snyk-cli:npm
+    steps:
+    - checkout
+    - run:
+        command: | 
+          snyk auth $SNYK_TOKEN
+          snyk code test || true
+  snyk_oss_test:
+    docker:
+    - image: circleci/node:4.8.2
+    steps:
+    - checkout
+    - snyk/scan:
+        token-variable: SNYK_TOKEN
+        fail-on-issues: false
+        monitor-on-build: false      
+  docker_build_push:
+    docker:
+      - image: cimg/node:18.0.0
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          TAG=0.1.&amp;lt;&amp;lt; pipeline.number &amp;gt;&amp;gt;
+          docker build -t $DOCKER_USERNAME/docker-goof:$TAG .
+          docker login -u $DOCKER_USERNAME --password $DOCKER_PASSWORD
+          docker push $DOCKER_USERNAME/docker-goof:$TAG 
+  snyk_container_test:
+    docker:
+    - image: snyk/snyk-cli:npm
+    steps:
+    - checkout
+    - run:
+        command: | 
+          TAG=0.1.&amp;lt;&amp;lt; pipeline.number &amp;gt;&amp;gt;
+          snyk auth $SNYK_TOKEN
+          snyk container test jiajunngjj/docker-goof:$TAG --file=./Dockerfile || true
+  trigger_argocd:
+    docker:
+      - image: cimg/base:2022.04
+    steps:
+      - run : |
+          TAG=0.1.&amp;lt;&amp;lt; pipeline.number &amp;gt;&amp;gt;
+          git clone https://github.com/jiajunngjj/argocd-goof.git
+          cd argocd-goof
+          sed -i 's/\(docker-goof\)\(.*\)/\1:'$TAG'/' goof/goof-deployment.yaml
+          git config user.email &quot;ngjiajun13@gmail.com&quot;
+          git config user.name &quot;jiajunngjj&quot;
+          git add goof/goof-deployment.yaml
+          git commit -m &quot;update from circleci to trigger argocd&quot;
+          git push https://$GITHUB_PERSONAL_TOKEN@github.com/jiajunngjj/argocd-goof.git 
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - snyk_code_test:
+          requires:
+            - build
+      - snyk_oss_test:
+          requires:
+            - build
+      - docker_build_push:
+          requires:
+            - snyk_code_test
+            - snyk_oss_test
+      - snyk_container_test:
+          requires:
+            - docker_build_push
+      - trigger_argocd:
+          requires:
+            - snyk_container_test
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note: I appended &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;|| true&lt;/code&gt; to ensure my Snyk test succeeds so it can move to the next stage.&lt;/p&gt;
+
+&lt;h3 id=&quot;requirements&quot;&gt;Requirements&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Snyk account&lt;/li&gt;
+  &lt;li&gt;DockerHub account&lt;/li&gt;
+  &lt;li&gt;Set up a variable, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SNYK_TOKEN&lt;/code&gt;, using Snyk API token&lt;/li&gt;
+  &lt;li&gt;Set up a variable, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GITHUB_PERSONAL_TOKEN&lt;/code&gt;, to store your GitHub personal access token&lt;/li&gt;
+  &lt;li&gt;Set up a variable, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DOCKER_USERNAME&lt;/code&gt;, to store your DockerHub username&lt;/li&gt;
+  &lt;li&gt;Set up a variable, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DOCKER_PASSWORD&lt;/code&gt;, to store your DockerHub password&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;ci-workflow&quot;&gt;CI Workflow&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;em&gt;build&lt;/em&gt; - Build/Compile the application&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;snyk_code_test&lt;/em&gt; - Run Snyk Code test (Static Application Security Testing (SAST))&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;snyk_oss_test&lt;/em&gt; - Run Snyk Open Source test (Software Composition Analysis (SCA))&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;docker_build_push&lt;/em&gt; - Run Docker workflow to build container image and push into my DockerHub repository&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;snyk_container_test&lt;/em&gt; - Run Snyk Container test to scan the built image&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;trigger_argocd&lt;/em&gt; - Update the git repository with the new image tag which Argo CD tracks&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;argo-cd-setup-with-snyk&quot;&gt;Argo CD Setup with Snyk&lt;/h2&gt;
+&lt;p&gt;Argo CD is a K8s native CD tool which tracks a repository and compares the application state with the current state of the K8s cluster. Then, it applies the required changes to the cluster configuration.
+I will be using Argo CD as the CD tool to deploy the application directly onto a K8s cluster. 
+Argo CD can be deployed either on K8s or VMs. My GitHub repository which CircleCI updates and Argo CD tracks, can be found here:
+&lt;a href=&quot;https://github.com/jiajunngjj/argocd-goof&quot;&gt;https://github.com/jiajunngjj/argocd-goof&lt;/a&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Creates an application on your Argo CD: 
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171633101-eba77e3e-efbb-4c5d-b04a-8cb99dece1bb.png&quot; alt=&quot;Argo CD creates app&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;Click on the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Sync&lt;/code&gt; button&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The above steps should create all the K8s objects (as per my GitHub repository) in your cluster.&lt;/p&gt;
+
+&lt;p&gt;To run Snyk IaC scan on the K8s yaml files, you will need to create a K8s job object:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+   
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: snyk-iac-scan
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+spec:
+  ttlSecondsAfterFinished: 600
+  template:
+    spec:
+      containers:
+      - name: snyk-cli
+        image: snyk/snyk-cli:npm
+        command: [&quot;/bin/sh&quot;,&quot;-c&quot;]
+        args:
+          - git clone https://github.com/jiajunngjj/argocd-goof.git;
+            snyk auth $SNYK_TOKEN;
+            snyk iac test argocd-goof/goof/goof-deployment.yaml || true;
+        env:
+          - name: SNYK_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: snyk-token
+                key: token
+      restartPolicy: Never
+  backoffLimit: 0
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Note that you will need to create a K8s secret, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SNYK_TOKEN&lt;/code&gt; in the namespace (in my case is apples) which you’re going to deploy the applications.
+The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;argocd.argoproj.io/hook: PreSync&lt;/code&gt; will run the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;snyk-cli&lt;/code&gt; container, which runs the Snyk IaC test on my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;goof-deployment.yaml&lt;/code&gt; before the actual
+deployment of my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;goof-deployment.yaml&lt;/code&gt;. Any detection of vulnerabilities will fail the deployment.&lt;/p&gt;
+
+&lt;h2 id=&quot;wrapping-up&quot;&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;The entire CI/CD workflow is as follows:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;CircleCI&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Build/Compile the application&lt;/li&gt;
+  &lt;li&gt;Run Snyk Code test (SAST)&lt;/li&gt;
+  &lt;li&gt;Run Snyk Open Source test (SCA)&lt;/li&gt;
+  &lt;li&gt;Run Docker workflow to build container image and push into my DockerHub repository&lt;/li&gt;
+  &lt;li&gt;Run Snyk Container test to scan the built image&lt;/li&gt;
+  &lt;li&gt;Update the goof-deployment.yaml in my GitHub with the new image tag, which Argo CD tracks&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Argo CD&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Detects the configuration drift&lt;/li&gt;
+  &lt;li&gt;Starts to sync to achieve the new state&lt;/li&gt;
+  &lt;li&gt;Triggers Snyk IaC scan&lt;/li&gt;
+  &lt;li&gt;If Snyk IaC detects no vulnerabilities, goof-deployment.yaml will be deployed&lt;/li&gt;
+&lt;/ol&gt;</content><author><name>Jia Jun Ng (JJ)</name></author><category term="DevSecOps" /><category term="Devops" /><category term="argocd" /><category term="circleci" /><category term="gitops" /><category term="snyk" /><summary type="html">How do you secure GitOps pipeline? In this post today, I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.</summary></entry><entry><title type="html">Integrate Snyk Into Google Cloud Build</title><link href="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build" rel="alternate" type="text/html" title="Integrate Snyk Into Google Cloud Build" /><published>2021-12-22T00:00:00+08:00</published><updated>2021-12-22T00:00:00+08:00</updated><id>http://localhost:4000/2021/12/22/Integrate-Snyk-Into-Google-Cloud-Build</id><content type="html" xml:base="http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build">&lt;p&gt;Are you using Google Cloud Build as your CI/CD pipeline to build your applications? If so, how do you mandate security across the different stages?&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/147042759-5e92873d-e1db-41f8-ad09-65f410698766.png&quot; alt=&quot;Snyk Google Cloud Build&quot; /&gt;&lt;/p&gt;
 
