@@ -348,6 +348,7 @@
     </ul>
   </li>
   <li><a href="#argo-cd-setup-with-snyk">Argo CD Setup with Snyk</a></li>
+  <li><a href="#sample-output">Sample Output</a></li>
   <li><a href="#wrapping-up">Wrapping up</a></li>
 </ul>
 
@@ -550,7 +551,27 @@ spec:
 </code></pre></div></div>
 <p>Note that you will need to create a K8s secret, <code class="language-plaintext highlighter-rouge">SNYK_TOKEN</code> in the namespace (in my case is apples) which you’re going to deploy the applications.
 The <code class="language-plaintext highlighter-rouge">argocd.argoproj.io/hook: PreSync</code> will run the <code class="language-plaintext highlighter-rouge">snyk-cli</code> container, which runs the Snyk IaC test on my <code class="language-plaintext highlighter-rouge">goof-deployment.yaml</code> before the actual
-deployment of my <code class="language-plaintext highlighter-rouge">goof-deployment.yaml</code>. Any detection of vulnerabilities will fail the deployment.</p>
+deployment of my <code class="language-plaintext highlighter-rouge">goof-deployment.yaml</code>. Any detection of vulnerabilities would result in a failure in deployment.</p>
+
+<h2 id="sample-output">Sample Output</h2>
+<p><strong>CircleCI</strong></p>
+
+<p>Pipeline running:
+<img src="https://user-images.githubusercontent.com/25560159/171661268-39ea519b-ca94-4b68-afc6-1cbd3500755d.png" alt="circleci ss1" /></p>
+
+<p>Snyk Code scan:
+<img src="https://user-images.githubusercontent.com/25560159/171661544-e6c9069c-4d17-4008-a836-f0594858880d.png" alt="circleci ss2" /></p>
+
+<p><strong>Argo CD</strong></p>
+
+<p>Before configuration drift detection:
+<img src="https://user-images.githubusercontent.com/25560159/171661806-d8de0b57-a42a-40d5-ade4-c4b1d7fc19d4.png" alt="argocd ss1" /></p>
+
+<p>After configuration drift detection, it starts to sync and run the job (Snyk IaC scan):
+<img src="https://user-images.githubusercontent.com/25560159/171662981-e338f59c-57fc-40d3-9603-9a7ee5cee97e.png" alt="argocd ss2" /></p>
+
+<p>Snyk IaC scan:
+<img src="https://user-images.githubusercontent.com/25560159/171662686-04c80cd2-1865-4d57-807c-322710d0073d.png" alt="argocd ss3" /></p>
 
 <h2 id="wrapping-up">Wrapping up</h2>
 <p>The entire CI/CD workflow is as follows:</p>

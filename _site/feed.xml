@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-06-02T23:01:15+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">How to run Snyk tests in CircleCI and Argo CD?</title><link href="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd" rel="alternate" type="text/html" title="How to run Snyk tests in CircleCI and Argo CD?" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>http://localhost:4000/2022/06/02/Snyk-With-CircleCI-And-ArgoCD</id><content type="html" xml:base="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">&lt;p&gt;How do you secure GitOps pipeline? In this post today,
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2022-06-02T23:19:20+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">JJ’s Blog</title><subtitle>Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions.</subtitle><author><name>Jia Jun Ng (JJ)</name></author><entry><title type="html">How to run Snyk tests in CircleCI and Argo CD?</title><link href="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd" rel="alternate" type="text/html" title="How to run Snyk tests in CircleCI and Argo CD?" /><published>2022-06-02T00:00:00+08:00</published><updated>2022-06-02T00:00:00+08:00</updated><id>http://localhost:4000/2022/06/02/Snyk-With-CircleCI-And-ArgoCD</id><content type="html" xml:base="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">&lt;p&gt;How do you secure GitOps pipeline? In this post today,
 I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171653052-06379084-2a2f-41ed-bf17-1d9f84cac0da.png&quot; alt=&quot;Snyk CircleCI ArgoCD&quot; /&gt;&lt;/p&gt;
@@ -179,7 +179,27 @@ spec:
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 &lt;p&gt;Note that you will need to create a K8s secret, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SNYK_TOKEN&lt;/code&gt; in the namespace (in my case is apples) which you’re going to deploy the applications.
 The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;argocd.argoproj.io/hook: PreSync&lt;/code&gt; will run the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;snyk-cli&lt;/code&gt; container, which runs the Snyk IaC test on my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;goof-deployment.yaml&lt;/code&gt; before the actual
-deployment of my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;goof-deployment.yaml&lt;/code&gt;. Any detection of vulnerabilities will fail the deployment.&lt;/p&gt;
+deployment of my &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;goof-deployment.yaml&lt;/code&gt;. Any detection of vulnerabilities would result in a failure in deployment.&lt;/p&gt;
+
+&lt;h2 id=&quot;sample-output&quot;&gt;Sample Output&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;CircleCI&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Pipeline running:
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171661268-39ea519b-ca94-4b68-afc6-1cbd3500755d.png&quot; alt=&quot;circleci ss1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Snyk Code scan:
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171661544-e6c9069c-4d17-4008-a836-f0594858880d.png&quot; alt=&quot;circleci ss2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Argo CD&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Before configuration drift detection:
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171661806-d8de0b57-a42a-40d5-ade4-c4b1d7fc19d4.png&quot; alt=&quot;argocd ss1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;After configuration drift detection, it starts to sync and run the job (Snyk IaC scan):
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171662981-e338f59c-57fc-40d3-9603-9a7ee5cee97e.png&quot; alt=&quot;argocd ss2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Snyk IaC scan:
+&lt;img src=&quot;https://user-images.githubusercontent.com/25560159/171662686-04c80cd2-1865-4d57-807c-322710d0073d.png&quot; alt=&quot;argocd ss3&quot; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;wrapping-up&quot;&gt;Wrapping up&lt;/h2&gt;
 &lt;p&gt;The entire CI/CD workflow is as follows:&lt;/p&gt;

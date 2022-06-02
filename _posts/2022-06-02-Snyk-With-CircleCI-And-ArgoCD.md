@@ -184,7 +184,27 @@ spec:
 ```
 Note that you will need to create a K8s secret, `SNYK_TOKEN` in the namespace (in my case is apples) which you're going to deploy the applications.
 The `argocd.argoproj.io/hook: PreSync` will run the `snyk-cli` container, which runs the Snyk IaC test on my `goof-deployment.yaml` before the actual
-deployment of my `goof-deployment.yaml`. Any detection of vulnerabilities will fail the deployment.
+deployment of my `goof-deployment.yaml`. Any detection of vulnerabilities would result in a failure in deployment.
+
+## Sample Output
+**CircleCI**
+
+Pipeline running:
+![circleci ss1](https://user-images.githubusercontent.com/25560159/171661268-39ea519b-ca94-4b68-afc6-1cbd3500755d.png)
+
+Snyk Code scan:
+![circleci ss2](https://user-images.githubusercontent.com/25560159/171661544-e6c9069c-4d17-4008-a836-f0594858880d.png)
+
+**Argo CD**
+
+Before configuration drift detection:
+![argocd ss1](https://user-images.githubusercontent.com/25560159/171661806-d8de0b57-a42a-40d5-ade4-c4b1d7fc19d4.png)
+
+After configuration drift detection, it starts to sync and run the job (Snyk IaC scan):
+![argocd ss2](https://user-images.githubusercontent.com/25560159/171662981-e338f59c-57fc-40d3-9603-9a7ee5cee97e.png)
+
+Snyk IaC scan:
+![argocd ss3](https://user-images.githubusercontent.com/25560159/171662686-04c80cd2-1865-4d57-807c-322710d0073d.png)
 
 ## Wrapping up
 The entire CI/CD workflow is as follows:
