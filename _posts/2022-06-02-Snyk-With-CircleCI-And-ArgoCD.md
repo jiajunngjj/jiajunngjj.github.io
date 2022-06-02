@@ -224,4 +224,4 @@ The entire CI/CD workflow is as follows:
 10. If Snyk IaC detects no vulnerabilities, goof-deployment.yaml will be deployed
 
 The GitOps workflow will fail whenever Snyk detects any vulnerabilities with severity above the threshold you defined.
-And this will ensure vulnerable codes will never reach production environment.
+And this will ensure that vulnerable codes will never reach production environment.
