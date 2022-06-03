@@ -53,7 +53,7 @@ var store = [{
         "url": "http://localhost:4000/2021/12/22/integrate-snyk-into-google-cloud-build",
         "teaser": null
       },{
-        "title": "How to run Snyk tests in CircleCI and Argo CD?",
+        "title": "How to run Snyk test in CircleCI and Argo CD?",
         "excerpt":"How do you secure GitOps pipeline? In this post today, I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD. GitOps is an interesting framework to manage and secure the application development pipeline. For instance, the GitOps workflow of an...","categories": [],
         "tags": ["DevSecOps","Devops","argocd","circleci","gitops","snyk"],
         "url": "http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd",

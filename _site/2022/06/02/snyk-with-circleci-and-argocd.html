@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>How to run Snyk tests in CircleCI and Argo CD? - JJ’s Blog</title>
+<!-- begin _includes/seo.html --><title>How to run Snyk test in CircleCI and Argo CD? - JJ’s Blog</title>
 <meta name="description" content="How do you secure GitOps pipeline? In this post today, I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.">
 
 
@@ -19,7 +19,7 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="JJ's Blog">
-<meta property="og:title" content="How to run Snyk tests in CircleCI and Argo CD?">
+<meta property="og:title" content="How to run Snyk test in CircleCI and Argo CD?">
 <meta property="og:url" content="http://localhost:4000/2022/06/02/snyk-with-circleci-and-argocd">
 
 
@@ -173,7 +173,7 @@
   
     <div class="author__avatar">
       
-        <img src="/assets/images/github.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
+        <img src="/assets/images/jjng.jpeg" alt="Jia Jun Ng (JJ)" itemprop="image">
       
     </div>
   
@@ -293,7 +293,7 @@
 
 
   <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
-    <meta itemprop="headline" content="How to run Snyk tests in CircleCI and Argo CD?">
+    <meta itemprop="headline" content="How to run Snyk test in CircleCI and Argo CD?">
     <meta itemprop="description" content="How do you secure GitOps pipeline? In this post today,I will be sharing on how you can find vulnerabilities using Snyk in GitOps toolset, mainly CircleCI and Argo CD.">
     <meta itemprop="datePublished" content="2022-06-02T00:00:00+08:00">
     
@@ -301,7 +301,7 @@
     <div class="page__inner-wrap">
       
         <header>
-          <h1 id="page-title" class="page__title" itemprop="headline">How to run Snyk tests in CircleCI and Argo CD?
+          <h1 id="page-title" class="page__title" itemprop="headline">How to run Snyk test in CircleCI and Argo CD?
 </h1>
           
 
@@ -594,6 +594,9 @@ deployment of my <code class="language-plaintext highlighter-rouge">goof-deploym
   <li>If Snyk IaC detects no vulnerabilities, goof-deployment.yaml will be deployed</li>
 </ol>
 
+<p>The GitOps workflow will fail whenever Snyk detects any vulnerabilities with severity above the threshold you defined.
+And this will ensure that vulnerable codes will never reach production environment.</p>
+
         
       </section>
 
@@ -652,11 +655,11 @@ deployment of my <code class="language-plaintext highlighter-rouge">goof-deploym
     <h4 class="page__share-title">Share on</h4>
   
 
-  <a href="https://twitter.com/intent/tweet?text=How+to+run+Snyk+tests+in+CircleCI+and+Argo+CD%3F%20http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
+  <a href="https://twitter.com/intent/tweet?text=How+to+run+Snyk+test+in+CircleCI+and+Argo+CD%3F%20http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--twitter" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Twitter"><i class="fab fa-fw fa-twitter" aria-hidden="true"></i><span> Twitter</span></a>
 
   <a href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--facebook" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on Facebook"><i class="fab fa-fw fa-facebook" aria-hidden="true"></i><span> Facebook</span></a>
 
-  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd&title=How to run Snyk tests in CircleCI and Argo CD?" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
+  <a href="https://www.reddit.com/submit?url=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd&title=How to run Snyk test in CircleCI and Argo CD?" class="btn btn--reddit" title="Share on Reddit"><i class="fab fa-fw fa-reddit" aria-hidden="true"></i><span> Reddit</span></a>
 
   <a href="https://www.linkedin.com/shareArticle?mini=true&url=http%3A%2F%2Flocalhost%3A4000%2F2022%2F06%2F02%2Fsnyk-with-circleci-and-argocd" class="btn btn--linkedin" onclick="window.open(this.href, 'window', 'left=20,top=20,width=500,height=500,toolbar=1,resizable=0'); return false;" title="Share on LinkedIn"><i class="fab fa-fw fa-linkedin" aria-hidden="true"></i><span> LinkedIn</span></a>
 </section>

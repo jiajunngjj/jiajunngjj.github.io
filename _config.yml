@@ -94,8 +94,8 @@ analytics:
 # Site Author
 author:
   name             : "Jia Jun Ng (JJ)"
-  avatar           : "/assets/images/github.jpeg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Microservices Architecture and Scalable Solutions."
+  avatar           : "/assets/images/jjng.jpeg" # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
+  bio              : "Automation, Containers, Cloud Infrastructure, Cloud Native Tools, DevSecOps, Kubernetes."
   #location         : "Singapore"
   #email            : "ngjiajun13@gmail.com"
   links:
