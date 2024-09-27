@@ -99,9 +99,9 @@ author:
   #location         : "Singapore"
   #email            : "ngjiajun13@gmail.com"
   links:
-    - label: "Snyk"
-      icon: "fas fa-fw fa-building"
-      url: "https://www.snyk.io"
+    #- label: "Snyk"
+    # icon: "fas fa-fw fa-building"
+    # url: "https://www.snyk.io"
     - label: "Singapore"
       icon: "fas fa-fw fas fa-map-marker-alt"
       url: "#"
