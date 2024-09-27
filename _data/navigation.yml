@@ -2,8 +2,8 @@
 main:
   - title: "Home"
     url: https://jjblog.io/
-  - title: "About"
-    url: https://jjblog.io/about/
+  #- title: "About"
+  #  url: https://jjblog.io/about/
   - title: "Archives"
     url: https://jjblog.io/archives/
   - title: "Tags"
