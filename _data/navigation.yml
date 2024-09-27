@@ -4,8 +4,8 @@ main:
     url: https://jjblog.io/
   #- title: "About"
   #  url: https://jjblog.io/about/
-  - title: "Archives"
-    url: https://jjblog.io/archives/
+  #- title: "Archives"
+  # url: https://jjblog.io/archives/
   - title: "Tags"
     url: https://jjblog.io/tags/
 #  - title: "Quick-Start Guide"
