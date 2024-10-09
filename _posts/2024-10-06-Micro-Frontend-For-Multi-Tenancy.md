@@ -5,7 +5,7 @@ tags:
 - microservices
 permalink: /:year/:month/:day/micro-frontend-for-multi-tenancy
 ---
-Well, I share a passion for all things Kubernetes and have been working on it for quite some time. Recently I have had the opportunity to work on something different, something more application related. In this simple post, I am going pen down my thoughts on micro frontend architecture, something which I have proposed in my solution.
+Well, I share a passion for all things Kubernetes and have been working on it for quite some time. Recently I have had the opportunity to work on something different, something more application related. In this simple post, I have penned down my thoughts on micro frontend architecture, something which I have proposed in my solution.
 
 ## Introduction to Micro Frontend
 Micro frontend (MFE) has a been around for quite some time and it is part of the best practices under the microservices architecture design. While microservices approach focuses on backend services, MFE is responsible for the frontend portion. MFE breaks the monolithic frontend application into smaller and loosely couple services.
